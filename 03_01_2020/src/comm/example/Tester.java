@@ -44,8 +44,10 @@ public class Tester {
 				}
 				break;
 			case 0:
-				System.exit(0);
 				System.out.println("bye!!!!");
+				System.exit(0);
+			
+				break;
 
 			default:
 				System.out.println("invalid choice");
