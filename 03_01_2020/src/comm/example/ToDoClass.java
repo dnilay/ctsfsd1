@@ -12,20 +12,21 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Todo {
+//class declaration
+public class ToDoClass {
 	private Task task;
 	//private RandomFortuneSeervice fortuneSeervice;
 	private String todoId;
 	private LocalDate date;
 	private boolean isCompleted;
 
-	public Todo(Task task /*RandomFortuneSeervice fortuneSeervice*/) {
+	public ToDoClass(Task task /*RandomFortuneSeervice fortuneSeervice*/) {
 
 		this.task = task;
 		//this.fortuneSeervice = fortuneSeervice;
 	}
 
-	public Todo createTodo(String author, String taskName, boolean isCompleted) {
+	public ToDoClass createTodo(String author, String taskName, boolean isCompleted) {
 		/*
 		 * if (task == null) { System.out.println("can't create task existing system");
 		 * System.exit(0); }
@@ -37,7 +38,7 @@ public class Todo {
 		 * }
 		 */
 		task=new Task();
-		Todo todo=new Todo();
+		ToDoClass todo=new ToDoClass();
 		//System.out.println("Your Daily Fortune>>> "+fortuneSeervice.getDailyFortune());
 		System.out.println("creating a new task.");
 		task=task.createTask(author, taskName);

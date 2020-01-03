@@ -3,18 +3,18 @@ package comm.example;
 import java.util.Scanner;
 
 public class Tester {
-	
-	private static final int MAX=5;
-	
-	
-	private static Scanner scanner=new Scanner(System.in);
 
+	private static final int MAX = 5;
+
+	private static Scanner scanner = new Scanner(System.in);
+
+///main method started
 	public static void main(String[] args) {
-		int counter=-1;
-		Todo todos[]=new Todo[MAX];
+		/*int counter=-1;
+		ToDoClass todos[]=new ToDoClass[MAX];
 		int choice=0;
-		Todo todo=new Todo();
-		Todo tempTodo=null;
+		ToDoClass todo=new ToDoClass();
+		ToDoClass tempTodo=null;
 		do {
 			System.out.println("1.add new todo.");
 			System.out.println("2.display all todo");
@@ -55,11 +55,13 @@ public class Tester {
 			}
 		} while (choice !=0);
 	
-		/*
+		
 		 * Todo todo=new Todo(new Task(),new RandomFortuneSeervice());
 		 * todo.createTodo("John", "Learning Angular", false);
-		 * System.out.println(todo.getTodoDetails());
-		 */
+		 * System.out.println(todo.getTodoDetails());*/
+		Person thePerson=new Person();
+		System.out.println(thePerson);
+		 
 	}
 
 }
