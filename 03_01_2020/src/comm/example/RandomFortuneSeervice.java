@@ -1,5 +1,7 @@
 package comm.example;
 
+import java.util.Random;
+
 public class RandomFortuneSeervice {
 	private String fortune[]= {
 			"DemoFortune-1","DemoFortune-2",
@@ -10,8 +12,8 @@ public class RandomFortuneSeervice {
 	public String getDailyFortune()
 	{
 
-		
-		return fortune[(int)Math.random()];
+		Random random=new Random();
+		return fortune[random.nextInt(5)];
 	}
 
 }
