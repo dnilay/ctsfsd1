@@ -16,11 +16,13 @@ public class Task {
 	private String author;
 	private String taskName;
 
-	public void createTask(String author,String taskName) {
+	public Task createTask(String author,String taskName) {
 		
-		setTaskName(taskName);
-		setAuthor(author);
-		setTaskId(UUID.randomUUID().toString());
+		Task task=new Task();
+		task.setTaskName(taskName);
+		task.setAuthor(author);
+		task.setTaskId(UUID.randomUUID().toString());
+		return task;
 	
 	}
 	
