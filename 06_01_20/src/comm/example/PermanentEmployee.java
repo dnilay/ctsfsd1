@@ -22,9 +22,6 @@ public class PermanentEmployee extends Employee {
 		return super.getDetails()+" Salary: "+salary;
 	}
 	
-	public void A()
-	{
-		
-	}
+	
 	
 }

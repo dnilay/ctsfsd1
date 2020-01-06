@@ -42,9 +42,29 @@ public class Employee {
 	public void setDateOfjoining(LocalDate dateOfjoining) {
 		this.dateOfjoining = dateOfjoining;
 	}
-
+	
+	public String getObjectType(Employee e)
+	{
+		if(e instanceof PermanentEmployee)
+		{
+			return "employee type is: permanent ";
+		}
+		else if(e instanceof TempEmployee)
+		{
+			return "employee type is: temporary ";
+		}
+		else if(e instanceof Consultant)
+		{
+			return "employee type is: consultant ";
+		}
+		else
+		{
+			return "employee type is: unknown";
+		}
+	}
+	
 	public String getDetails() {
-		return "Name: " + getEmployeeName() + " EmployeeId: " + getEmployeeId() + " Joining date: "
+		return getObjectType(this)+ "Name: " + getEmployeeName() + " EmployeeId: " + getEmployeeId() + " Joining date: "
 				+ getDateOfjoining();
 	}
 

@@ -26,12 +26,15 @@ public class Tester {
 		System.out.println(a);
 	}
 	}*/
+		
+		
 		Employee employee=null;
 		employee=new PermanentEmployee(UUID.randomUUID().toString(),"Marry",LocalDate.now(),12000);
-		System.out.println(employee.getDetails());;
-		
+		System.out.println(employee.getDetails());
 		employee=new TempEmployee(30);
-		System.out.println(employee.getDetails());;
+		System.out.println(employee.getDetails());
+		employee=new Consultant(UUID.randomUUID().toString(),"Joseph",LocalDate.now(), 15000);
+		System.out.println(employee.getDetails());
 	}
 
 }
