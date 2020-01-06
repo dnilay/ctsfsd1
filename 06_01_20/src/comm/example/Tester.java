@@ -4,9 +4,11 @@ public class Tester {
 
 	public static void main(String[] args) {
 	MyArray myArray=new MyArray();
-	myArray.createArray();
-	myArray.displayArray();
-
+		/*
+		 * myArray.createArray(); myArray.displayArray();
+		 */
+	myArray.convertStringToArray("Hello World");
+	myArray.displayConvertedArray();
 	}
 
 }
