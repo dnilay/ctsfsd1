@@ -27,14 +27,40 @@ public class Tester {
 	}
 	}*/
 		
+		/*
+		 * Employee employee=null; employee=new
+		 * PermanentEmployee(UUID.randomUUID().toString(),"Marry",LocalDate.now(),12000)
+		 * ; System.out.println(employee.getDetails()); employee=new TempEmployee(30);
+		 * System.out.println(employee.getDetails()); employee=new
+		 * Consultant(UUID.randomUUID().toString(),"Joseph",LocalDate.now(), 15000);
+		 * System.out.println(employee.getDetails());
+		 */
 		
-		Employee employee=null;
-		employee=new PermanentEmployee(UUID.randomUUID().toString(),"Marry",LocalDate.now(),12000);
-		System.out.println(employee.getDetails());
-		employee=new TempEmployee(30);
-		System.out.println(employee.getDetails());
-		employee=new Consultant(UUID.randomUUID().toString(),"Joseph",LocalDate.now(), 15000);
-		System.out.println(employee.getDetails());
+		CD cd=new InternationalCD(1, "Harry Potter", "adventure", 20, "english");
+		cd.getCDType(cd);
+		System.out.println(cd);
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	}
 
 }
