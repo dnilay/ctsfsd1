@@ -1,12 +1,15 @@
 package comm.example;
 
+import java.time.LocalDate;
+import java.util.UUID;
+
 public class Tester {
 
 	public static void main(String[] args) {
-	MyArray myArray=new MyArray();
-		/*
+	/*MyArray myArray=new MyArray();
+		
 		 * myArray.createArray(); myArray.displayArray();
-		 */
+		 
 	//myArray.convertStringToArray("Hello World");
 	//myArray.displayConvertedArray();
 	//original array
@@ -22,6 +25,13 @@ public class Tester {
 	{
 		System.out.println(a);
 	}
+	}*/
+		Employee employee=null;
+		employee=new PermanentEmployee(UUID.randomUUID().toString(),"Marry",LocalDate.now(),12000);
+		System.out.println(employee.getDetails());;
+		
+		employee=new TempEmployee(30);
+		System.out.println(employee.getDetails());;
 	}
 
 }
