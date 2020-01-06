@@ -36,9 +36,35 @@ public class Tester {
 		 * System.out.println(employee.getDetails());
 		 */
 		
-		CD cd=new InternationalCD(1, "Harry Potter", "adventure", 20, "english");
-		cd.getCDType(cd);
-		System.out.println(cd);
+		/*
+		 * CD cd=new InternationalCD(1, "Harry Potter", "adventure", 20, "english");
+		 * cd.getCDType(cd); System.out.println(cd);
+		 * 
+		 * 
+		 */
+		
+		MyClass myClass=new MyClass();
+		System.out.println(myClass.add("john ", 100, 200));
+		System.out.println("Result= "+myClass.add(10,20,30));
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		
 		
 		
