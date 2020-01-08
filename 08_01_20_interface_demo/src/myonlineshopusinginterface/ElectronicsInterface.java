@@ -1,6 +1,6 @@
 
 package myonlineshopusinginterface;
-//interface ElectronicsInterface
+//interface Electronic
 public interface ElectronicsInterface extends ProductInterface {
     
    public String getManufacturer();
