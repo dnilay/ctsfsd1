@@ -1,6 +1,6 @@
 
 package myonlineshopusinginterface;
-
+//Main class
 public class Main {
     
     /** Creates a new instance of Main */
