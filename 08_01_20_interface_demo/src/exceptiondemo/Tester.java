@@ -1,5 +1,7 @@
 package exceptiondemo;
 
+import javax.security.auth.callback.PasswordCallback;
+
 public class Tester {
 	
 	
@@ -20,13 +22,11 @@ public class Tester {
 		 * catch(Exception e) { System.out.println(e.toString()); }
 		 * 
 		 */
-		Tester tester=new Tester();
-		try {
-			tester.calculate(args[0]);	
-		} catch (Exception e) {
-			System.err.println(e.toString());
-			e.printStackTrace();
-		}
+	//	Tester tester=new Tester();
+		/*
+		 * try { tester.calculate(args[0]); } catch (Exception e) {
+		 * System.err.println(e.toString()); e.printStackTrace(); }
+		 */
 		
 
 	}
