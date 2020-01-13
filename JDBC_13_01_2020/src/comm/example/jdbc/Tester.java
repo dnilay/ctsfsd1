@@ -11,9 +11,11 @@ public class Tester {
 		Tester tester = new Tester();
 		tester.service = new EmployeeServiceImpl();
 		List<Employee> list=tester.service.getAllEmployees();
-		System.out.println("ID  FIRST_NAME  LAST_NAME  SALARY");
+
+
+System.out.println("EMPLOYEEID\t"+"FIRST_NAME\t"+"LAST_NAME\t"+"SALARY");
 		list.forEach(e->{
-			System.out.println(e.getEmployeeId()+"  "+e.getFirstName()+"  "+e.getLastName()+"  "+e.getSalary());
+			System.out.println(e.getEmployeeId().toString()+"\t\t"+e.getFirstName()+"\t\t"+e.getLastName()+"\t\t"+e.getSalary().toString());
 		});
 
 	}

@@ -1,5 +1,6 @@
 package comm.example.jdbc;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -20,6 +21,9 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 			list = new ArrayList<Employee>();
 		} catch (SQLException e) {
 
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
