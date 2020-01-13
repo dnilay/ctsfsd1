@@ -1,5 +1,4 @@
 2.	Q2. Password Validation
-
 Create a class ‘UserMainCode’  and for the class define a static method for validating the password received as parameter.
 public static boolean checkPassword(String password){}.
 A valid password should satisfy the following rules.
@@ -16,9 +15,7 @@ Output : Invalid Password
 
 Q3.
 Comparable - Display State
-
 Write a Java program to get the country names and state names from the user seperated by a pipe symbol. Finally display all the countries and their states sorted in ascending order based on their names.
-
 Create a main class "Main.java"
 Create country class with below attributes,
 •	name - String
