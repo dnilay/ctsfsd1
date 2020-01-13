@@ -1,0 +1,67 @@
+2.	Q2. Password Validation
+
+Create a class ‘UserMainCode’  and for the class define a static method for validating the password received as parameter.
+public static boolean checkPassword(String password){}.
+A valid password should satisfy the following rules.
+1.	It should be minimum of 8 characters in length.
+2.	It should have at least one lower case letter,one upper case letter,
+one digit and one special character
+Create a ‘Main’ class and define th ‘main()’ method for input,output
+Sample Input 1
+Night#321
+Output :Valid Password
+Sample input 2
+night#321
+Output : Invalid Password
+
+Q3.
+Comparable - Display State
+
+Write a Java program to get the country names and state names from the user seperated by a pipe symbol. Finally display all the countries and their states sorted in ascending order based on their names.
+
+Create a main class "Main.java"
+Create country class with below attributes,
+•	name - String
+•	stateList - List<State> (All state object for this country is stored in this list)
+Add appropriate getter and setter methods for Country class
+Include a constructor accepting country name as a parameter
+Below are the methods in country class
+•	addState(String statename) - Add the new state to this country object
+•	getStateList() - Sort the state collection and return the list
+Create State class with single attribute name
+Add appropriate getter and setter methods for State class
+Include a constructor with single argument state name
+Implement Comparable interface in the State class and implement the method compareTo()
+
+Input and Output Format:
+First input corresponds to the number of input elements and followed by country and state information in the format countryname|statename.
+Display the state name followed by two hyphen(-)
+Refer sample input and output for formatting specifications.
+
+[All text in bold corresponds to input and the rest corresponds to output]
+Sample Input/Output :
+10
+India|Tamilnadu
+India|Kerala
+India|Odisha
+USA|Texas
+USA|Mississippi
+USA|Alaska
+India|Punjab
+Australia|Victoria
+Australia|Tasmania
+Australia|Queensland
+Countries and States in ascending order
+Australia
+--Queensland
+--Tasmania
+--Victoria
+India
+--Kerala
+--Odisha
+--Punjab
+--Tamilnadu
+USA
+--Alaska
+--Mississippi
+--Texas
