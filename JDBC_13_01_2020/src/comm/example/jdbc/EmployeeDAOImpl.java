@@ -32,10 +32,10 @@ public class EmployeeDAOImpl implements EmployeeDAO {
 	public List<Employee> getAllEmployees() throws SQLException {
 
 		statement = connection.createStatement();
-		ResultSet resultSet = statement.executeQuery("select employee_id,first_name,last_name,salary from employees");
+		ResultSet resultSet = statement.executeQuery("select id,first_name,last_name,salary from employees");
 		while (resultSet.next()) {
 
-			list.add(new Employee(resultSet.getInt("employee_id"),
+			list.add(new Employee(resultSet.getInt("id"),
 					resultSet.getString("first_name"),
 					resultSet.getString("last_name"),
 					resultSet.getDouble("salary")));
