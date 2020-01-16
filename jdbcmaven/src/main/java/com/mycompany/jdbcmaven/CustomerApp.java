@@ -18,9 +18,11 @@ public class CustomerApp {
 	public static void main(String args[]) throws NumberFormatException, IOException, SQLException {
 		int choice = 0;
 		String fName,lName,email,uId;
+		List<Customer> list=null;
+		Customer customer=null;
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		do {
-			System.out.println("1. create customer");
+			System.out.println("======================\n1. create customer");
 			System.out.println("2. display all customers");
 			System.out.println("3. find customer by id");
 			System.out.println("4. update customer");
@@ -38,13 +40,13 @@ public class CustomerApp {
 				email=br.readLine().toString();
 				String arr[]=UUID.randomUUID().toString().split("-");
 				Customer theCustomer=new Customer((arr[0]+arr[1]), fName, lName, email);
-				Customer customer=service.createCuastomer(theCustomer);
+				customer=service.createCuastomer(theCustomer);
 				System.out.println("Create Customer Sucess "+customer);
 				break;
 			case 3:
-				System.out.print(" UID Name: ");
+				System.out.print(" UID: ");
 				uId=br.readLine().toString();
-				List<Customer> list=service.findById(uId);
+				list=service.findById(uId);
 				if(list.isEmpty())
 				{
 					System.out.println("no such uid found");
@@ -54,9 +56,41 @@ public class CustomerApp {
 					System.out.println("customer found: "+c);
 				}
 				break;
+			case 2:
+				list=service.getAllCustomers();
+				System.out.format("%-20s%-20s%-20s%-20s\n","ID",
+						"FIRST_NAME","LAST_NAME","EMAIL");
+				list.forEach(c->{
+					System.out.format("%-20s%-20s%-20s%-20s\n",c.getUId()
+							,c.getFirstName(),c.getLastName(),c.getEmail());
+				});
+				break;
+			case 4:
+				System.out.print(" UID : ");
+				uId=br.readLine().toString();
+				list=service.findById(uId);
+				if(list.isEmpty())
+				{
+					System.out.println("no such uid found");
+				}
+				else {
+					Customer c=list.get(0);
+					System.out.print(" First Name: ");
+					fName=br.readLine().toString();
+					System.out.print(" Last Name: ");
+					lName=br.readLine().toString();
+					System.out.print(" Email: ");
+					email=br.readLine().toString();
+					c.setEmail(email);
+					c.setFirstName(fName);
+					c.setLastName(lName);
+					customer=service.updateCustomer(c,c.getUId());
+					System.out.println("customer updated: "+customer);
+				}
+				break;
 			case 0:
 				System.exit(0);
-				
+				break;
 			default:
 				System.out.println("invalid choice");
 				break;

@@ -28,4 +28,16 @@ public class CustomerServiceImpl implements CustomerService {
 		return dao.findById(uId);
 	}
 
+	@Override
+	public List<Customer> getAllCustomers() throws SQLException {
+		// TODO Auto-generated method stub
+		return dao.getAllCustomers();
+	}
+
+	@Override
+	public Customer updateCustomer(Customer customer,String uId) throws SQLException {
+		// TODO Auto-generated method stub
+		return dao.updateCustomer(customer,uId);
+	}
+
 }

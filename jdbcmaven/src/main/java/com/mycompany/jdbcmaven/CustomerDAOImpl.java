@@ -61,5 +61,37 @@ public class CustomerDAOImpl implements CustomerDAO {
 		}
 		return list;
 	}
+	@Override
+	public List<Customer> getAllCustomers() throws SQLException {
+		pStatement=connection.prepareStatement("select uid,first_name,"
+				+ "last_name,email from"
+				+ " customer");
+		
+		ResultSet rSet=pStatement.executeQuery();
+		List<Customer> list=new ArrayList<Customer>();
+		while(rSet.next())
+		{
+			Customer customer=new Customer(rSet.getString("uid"),
+					rSet.getString("first_name"), rSet.getString("last_name"), 
+					rSet.getString("email"));
+			list.add(customer);
+		}
+		return list;
+	}
+	@Override
+	public Customer updateCustomer(Customer customer,String uId) throws SQLException {
+		// TODO Auto-generated method stub
+		pStatement=connection.prepareStatement("update customer "
+				+ "set first_name=? , "
+				+ "last_name=?, "
+				+ "email=?"
+				+ " where uid=?");
+		pStatement.setString(1, customer.getFirstName());
+		pStatement.setString(2, customer.getLastName());
+		pStatement.setString(3, customer.getEmail());
+		pStatement.setString(4, uId);
+		pStatement.executeUpdate();
+		return customer;
+	}
 
 }
