@@ -26,7 +26,7 @@ public class MyConnectionFactory {
 	
 	public Connection getMyConnection() throws IOException, SQLException
 	{
-		InputStream in=new FileInputStream("mysql.properties");
+		InputStream in=new FileInputStream("h2.properties");
 		Properties prop=new Properties();
 		prop.load(in);
 		connection=DriverManager.getConnection(prop.getProperty("connection.url"),prop.getProperty("connection.user"),prop.getProperty("connection.password"));

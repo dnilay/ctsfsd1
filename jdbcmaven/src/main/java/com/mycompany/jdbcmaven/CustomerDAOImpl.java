@@ -27,7 +27,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 
 		} catch (IOException | SQLException e) {
 			
-			
+			e.printStackTrace();
 			logger.info("connection unsucessfull");
 		}
 	}
@@ -92,6 +92,13 @@ public class CustomerDAOImpl implements CustomerDAO {
 		pStatement.setString(4, uId);
 		pStatement.executeUpdate();
 		return customer;
+	}
+	@Override
+	public void deleteCustomer(String uId) throws SQLException {
+		pStatement =connection.prepareStatement("delete from customer where uid=?");
+		pStatement.setString(1, uId);
+		pStatement.executeUpdate();
+		
 	}
 
 }

@@ -88,6 +88,20 @@ public class CustomerApp {
 					System.out.println("customer updated: "+customer);
 				}
 				break;
+			case 5:
+				System.out.print(" UID : ");
+				uId=br.readLine().toString();
+				list=service.findById(uId);
+				if(list.isEmpty())
+				{
+					System.out.println("no such uid found");
+				}
+				else {
+					service.deleteCustomer(uId);
+					System.out.println("deletion sucessfull");
+					
+				}
+				break;
 			case 0:
 				System.exit(0);
 				break;

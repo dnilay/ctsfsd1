@@ -40,4 +40,9 @@ public class CustomerServiceImpl implements CustomerService {
 		return dao.updateCustomer(customer,uId);
 	}
 
+	@Override
+	public void deleteCustomer(String uId) throws SQLException {
+		dao.deleteCustomer(uId);
+	}
+
 }
