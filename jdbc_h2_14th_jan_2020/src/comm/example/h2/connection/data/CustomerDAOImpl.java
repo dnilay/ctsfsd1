@@ -4,11 +4,13 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import comm.example.h2.connection.factory.MyConnectionFactory;
 
 public class CustomerDAOImpl implements CustomerDAO {
-
+static Logger logger=Logger.getLogger("comm.example.h2.connection.data.CustomerDAOImpl");
 	private MyConnectionFactory factory=null;
 	private Connection connection=null;
 	PreparedStatement pStatement=null;
@@ -17,9 +19,11 @@ public class CustomerDAOImpl implements CustomerDAO {
 		factory=MyConnectionFactory.getFactoryObject();
 		try {
 			connection=factory.getMyConnection();
+			logger.info("ok");
 		} catch (IOException | SQLException e) {
 			
-			e.printStackTrace();
+			
+			logger.log(Level.WARNING, e.toString());
 		}
 	}
 	@Override
