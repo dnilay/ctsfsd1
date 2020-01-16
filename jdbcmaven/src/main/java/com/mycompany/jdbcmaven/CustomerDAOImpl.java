@@ -2,6 +2,7 @@ package com.mycompany.jdbcmaven;
 
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -63,6 +64,15 @@ public class CustomerDAOImpl implements CustomerDAO {
 	}
 	@Override
 	public List<Customer> getAllCustomers() throws SQLException {
+		DatabaseMetaData mData=connection.getMetaData();
+		ResultSet rs=mData.getTables(null, null, "EMPLOYEES", null);
+		if(rs.next())
+		{
+			System.out.println("table exists");
+		}
+		else {
+			System.out.println("table does not exists");
+		}
 		pStatement=connection.prepareStatement("select uid,first_name,"
 				+ "last_name,email from"
 				+ " customer");
