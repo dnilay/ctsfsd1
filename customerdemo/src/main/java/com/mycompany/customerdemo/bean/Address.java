@@ -2,9 +2,11 @@ package com.mycompany.customerdemo.bean;
 
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
 public class Address {
 	private String addressLine1;
 	private String addressLine2;

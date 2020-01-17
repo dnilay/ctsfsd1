@@ -18,7 +18,7 @@ public class App
         	System.out.println(employee==employee1);
         	System.out.println(employee);
 		} catch (Exception e) {
-			
+			e.printStackTrace();
 		}
     }
 }
