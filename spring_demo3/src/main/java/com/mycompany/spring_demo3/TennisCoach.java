@@ -16,7 +16,16 @@ public class TennisCoach implements Coach {
 		this.fortuneService = theFortuneService;
 	}
 
+	public void initCoach()
+	{
+		System.out.println(">>inside init method");
+	}
 	
+	
+	public void preDestroyCoach()
+	{
+		System.out.println(">>inside destroy method");
+	}
 	
 	@Override
 	public String getDailyWorkout() {

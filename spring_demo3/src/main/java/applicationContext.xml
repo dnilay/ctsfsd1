@@ -8,7 +8,7 @@
 <context:property-placeholder location="classpath:sports.properties"/>
 <bean id="fortuneService" class="com.mycompany.spring_demo3.HappyFortuneService"></bean>
 	<bean id="theCoach"
-		class="com.mycompany.spring_demo3.TennisCoach">
+		class="com.mycompany.spring_demo3.TennisCoach" init-method="initCoach" destroy-method="preDestroyCoach">
 		<property name="age" value="${foo.age}"/>
 		<property name="email" value="${foo.email}"></property>
 		<property name="fortuneService" ref="fortuneService"></property>
