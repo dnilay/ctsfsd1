@@ -1,0 +1,13 @@
+Manifest-Version: 1.0
+Built-By: Alchemy
+Class-Path: libs/spring-context-5.2.3.RELEASE.jar libs/spring-aop-5.2.
+ 3.RELEASE.jar libs/spring-expression-5.2.3.RELEASE.jar libs/spring-co
+ re-5.2.3.RELEASE.jar libs/spring-jcl-5.2.3.RELEASE.jar libs/spring-be
+ ans-5.2.3.RELEASE.jar libs/mysql-connector-java-8.0.18.jar libs/proto
+ buf-java-3.6.1.jar libs/spring-jdbc-5.2.3.RELEASE.jar libs/spring-tx-
+ 5.2.3.RELEASE.jar libs/c3p0-0.9.5.5.jar libs/mchange-commons-java-0.2
+ .19.jar
+Build-Jdk: 1.8.0_231
+Created-By: Maven Integration for Eclipse
+Main-Class: com.mycompany.springjdbcdemo.App
+

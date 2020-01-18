@@ -1,0 +1,4 @@
+com\mycompany\springjdbcdemo\dao\CustomerDaoImpl.class
+com\mycompany\springjdbcdemo\dao\CustomerDao.class
+com\mycompany\springjdbcdemo\model\Customer.class
+com\mycompany\springjdbcdemo\App.class
