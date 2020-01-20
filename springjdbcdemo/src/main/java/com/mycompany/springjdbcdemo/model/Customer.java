@@ -25,9 +25,7 @@ public class Customer {
 	}
 	@Override
 	public String toString() {
-		return "uid=" + uid + " firstName=" +
-	firstName + " lastName=" + lastName + " email=" + email
-				;
+		return String.format("%-20s%-20s%-20s%-20s\n", uid,firstName,lastName,email);
 	}
 
 

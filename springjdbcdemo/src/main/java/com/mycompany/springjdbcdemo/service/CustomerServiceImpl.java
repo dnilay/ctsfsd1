@@ -34,6 +34,27 @@ private CustomerDao2 dao2;
 	}
 
 
+	@Override
+	public List<Customer> getCustomerById(String uId) throws SQLException {
+		// TODO Auto-generated method stub
+		return dao2.getCustomerById(uId);
+	}
+
+
+	@Override
+	public int updateCustomerById(Customer customer) throws SQLException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
+	@Override
+	public int deleteCustomer(String uId) throws SQLException {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+
 	
 
 }

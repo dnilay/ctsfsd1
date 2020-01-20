@@ -10,8 +10,6 @@ import org.springframework.stereotype.Component;
 import com.mycompany.springjdbcdemo.model.Customer;
 import com.mycompany.springjdbcdemo.model.CustomerRowMapper;
 
-import lombok.Setter;
-
 @Component("dao2")
 
 public class CustomerDaoImplVersion2 implements CustomerDao2 {
@@ -38,6 +36,24 @@ public class CustomerDaoImplVersion2 implements CustomerDao2 {
 		
 		
 		return jdbcTemplate.query(query, new CustomerRowMapper());
+	}
+
+	@Override
+	public List<Customer> getCustomerById(String uId) throws SQLException {
+		String query="select uid,first_name,last_name,email from customer where uid=?";
+		return jdbcTemplate.query(query, new Object[] {uId},new CustomerRowMapper());
+	}
+
+	@Override
+	public int updateCustomerById(Customer customer) throws SQLException {
+	
+		return 0;
+	}
+
+	@Override
+	public int deleteCustomer(String uId) throws SQLException {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }
