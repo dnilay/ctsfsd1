@@ -1,5 +1,7 @@
 package com.mycompany.springjdbcdemo.model;
 
+import org.springframework.jdbc.core.JdbcTemplate;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -27,5 +29,6 @@ public class Customer {
 	firstName + " lastName=" + lastName + " email=" + email
 				;
 	}
-	
+
+
 }
