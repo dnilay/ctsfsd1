@@ -18,8 +18,7 @@ public class App {
 	public static void main(String[] args) throws IOException
 
 	{
-		Logger logger = Logger.getLogger("org.hibernate");
-		logger.setLevel(Level.OFF);
+		
 		
 		
 		
