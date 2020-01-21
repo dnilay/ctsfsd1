@@ -1,44 +1,37 @@
 package comm.example;
 
-import java.util.List;
-
-import org.hibernate.Query;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import comm.example.entity.Person;
+import comm.example.service.PersonService;
+import comm.example.service.PersonServiceImpl;
 
-public class App 
-{
-    public static void main( String[] args )
-    
-    {
-    	SessionFactory factory=null;
-    	Session session=null;
-       try {
-    	   factory=new Configuration().configure().addAnnotatedClass(Person.class)
-    			   .buildSessionFactory();
-    	   session=factory.openSession();
-			/*
-			 * Person person=new Person(); person.setUId(UUID.randomUUID().toString());
-			 * person.setDateOfBirth(LocalDate.now()); person.setCName("Doe");
-			 * session.getTransaction().begin(); session.save(person);
-			 * session.getTransaction().commit(); System.out.println(person);
-			 */
-    	 Query q= session.createQuery("from Person");
-    	 List<Person> l=q.list();
-    	for(Person p:l)
-    	{
-    		System.out.println(p);
-    	}
+public class App {
+
+	private static PersonService service;
+	static {
+		service=new PersonServiceImpl();
+	}
+	public static void main(String[] args) throws IOException
+
+	{
+		Logger logger = Logger.getLogger("org.hibernate");
+		logger.setLevel(Level.OFF);
 		
-	} catch (Exception e) {
-		e.printStackTrace();
+		
+		
+		/*
+		 * Person p=service.createPerson(new Person("U102","Rahul",LocalDate.now()));
+		 * System.out.println(p);
+		 */
+		 
+		
+		  Person p=service.getPersonByid(100);
+		  System.out.println(p);
+		 
+		//service.deletePerson(1);
 	}
-       finally {
-		session.close();
-		factory.close();
-	}
-    }
 }

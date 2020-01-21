@@ -16,13 +16,19 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class Person {
-	@Id
-	
+	@Id@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 	private String uId;
 	@Column(name = "name")
 	private String cName;
 	@Column(name = "dob")
 	private LocalDate dateOfBirth;
+	public Person(String uId, String cName, LocalDate dateOfBirth) {
+		super();
+		this.uId = uId;
+		this.cName = cName;
+		this.dateOfBirth = dateOfBirth;
+	}
 
 	
 
