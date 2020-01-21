@@ -13,10 +13,6 @@ import com.mycompany.javaconfig.config.CustomerConfig;
 import com.mycompany.javaconfig.model.Customer;
 import com.mycompany.javaconfig.service.CustomerService;
 
-/**
- * Hello world!
- *
- */
 public class App 
 {
     public static void main( String[] args ) throws IOException, SQLException
@@ -88,17 +84,21 @@ public class App
 			case 4:
 				System.out.print("uid>> ");
 				uId=br.readLine();
-				l=service.getCustomerById(uId);
-				if(l.isEmpty())
+				System.out.print("first name>> ");
+				firstName=br.readLine();
+				System.out.print("last name>> ");
+				lastName=br.readLine();
+				System.out.print("email>> ");
+				email=br.readLine();
+				Customer c=new Customer(uId, firstName, lastName, email);
+				int result=service.updateCustomerById(c);
+				if(result==0)
 				{
-					System.out.println("customer not found");
+					System.out.println("no such customer found");
 				}
 				else
 				{
-					System.out.format("%-20s%-20s%-20s%-20s\n", "ID","FIRST_NAME","LAST_NAME","EMIL");
-					l.forEach(c->{
-						System.out.println(c);
-					});
+					System.out.println("customer updated\n"+c);
 				}
 				break;
 

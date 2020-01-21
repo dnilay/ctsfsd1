@@ -40,7 +40,7 @@ public class CustomerServiceImpl implements CustomerService {
 	@Override
 	public int updateCustomerById(Customer customer) throws SQLException {
 		// TODO Auto-generated method stub
-		return 0;
+		return dao.updateCustomerById(customer);
 	}
 
 	@Override

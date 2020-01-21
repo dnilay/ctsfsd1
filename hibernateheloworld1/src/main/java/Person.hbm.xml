@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<!-- Generated Jan 21, 2020 10:31:13 AM by Hibernate Tools 3.5.0.Final -->
+<hibernate-mapping>
+    <class name="comm.example.hibernate.model.Person" table="PERSON">
+        <id name="id" type="java.lang.String">
+            <column name="ID" />
+            <generator class="assigned" />
+        </id>
+        <property name="name" type="java.lang.String">
+            <column name="CNAME" />
+        </property>
+    </class>
+</hibernate-mapping>

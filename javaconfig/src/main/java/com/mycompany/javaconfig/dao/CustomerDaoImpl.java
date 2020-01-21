@@ -47,7 +47,9 @@ public class CustomerDaoImpl implements CustomerDao {
 	@Override
 	public int updateCustomerById(Customer customer) throws SQLException {
 	
-		return 0;
+		return jdbcTemplate.update("update customer set first_name=?"
+				+ ",last_name=?,email=? where uid=?",new Object[] {customer.getFirstName(),customer.getLastName()
+						,customer.getEmail(),customer.getUid()});
 	}
 
 	@Override
