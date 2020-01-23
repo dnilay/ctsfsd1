@@ -14,6 +14,16 @@ import javax.persistence.Table;
 @Table(name="course")
 public class Course {
 
+	// define our fields
+	
+	// define constructors
+	
+	// define getter setters
+	
+	// define tostring
+	
+	// annotate fields
+	
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
