@@ -24,4 +24,12 @@ public class UserDetail {
 	private String userName;
 	@Email(message = "invalid email")
 	private String email;
+	public UserDetail(String userId, @Length(min = 8, max = 15, message = "invalid username") String userName,
+			@Email(message = "invalid email") String email) {
+		super();
+		this.userId = userId;
+		this.userName = userName;
+		this.email = email;
+	}
+	
 }
