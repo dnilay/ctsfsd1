@@ -1,3 +1,6 @@
+<%@page import="crm.mapper.Customermapper"%>
+<%@page import="crm.mapper.CustomerDTOImpl"%>
+<%@page import="crm.model.CustomerDto"%>
 <%@page import="crm.model.Customer"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
@@ -22,15 +25,17 @@
 <%
 
 List<Customer> list=(List<Customer>)request.getAttribute("SUCCESS");
+Customermapper impl=new Customermapper();
+for(Customer c:list){
+CustomerDto dto=impl.customerToCustomerDto(c);%>
 
-for(Customer c:list){%>
 
 	<tbody>
     <tr>
-      <td><%out.println(c.getUId()); %></td>
-      <td><%out.println(c.getFirstName()); %></td>
-      <td><%out.println(c.getLastName()); %></td>
-      <td><%out.println(c.getEmail()); %></td>
+      <td><%out.println(dto.getUId()); %></td>
+      <td><%out.println(dto.getFirstName()); %></td>
+      <td><%out.println(dto.getLastName()); %></td>
+      <td><%out.println(dto.getEmail()); %></td>
     </tr>
  
   </tbody>
