@@ -7,7 +7,6 @@ import crm.model.Customer;
 
 public class CustomerUtil {
 
-	private static SessionFactory factory=null;
 	public static SessionFactory getMySessionFactory()
 	{
 		return new Configuration().configure("hibernate.cfg.xml")
