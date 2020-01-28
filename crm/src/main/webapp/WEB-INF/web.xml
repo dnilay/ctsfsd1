@@ -24,4 +24,5 @@
   	<servlet-name>CustomerView</servlet-name>
   	<url-pattern>/success.view</url-pattern>
   </servlet-mapping>
+  
 </web-app>
