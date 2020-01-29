@@ -50,17 +50,22 @@
 				
 				<!-- loop over and print our customers -->
 				<c:forEach var="tempCustomer" items="${customers}">
-				
+					<c:url var="updateUrl" value="updateCustomer.do">
+					
+					<c:param name="customerId" value="${tempCustomer.id}"/>
+					</c:url>		
 					<tr>
-						<td> ${tempCustomer.firstName} </td>
+						<td>${tempCustomer.firstName}</td>
 						<td> ${tempCustomer.lastName} </td>
 						<td> ${tempCustomer.email} </td>
+						<td><a href="${ updateUrl}">Update</a></td>
+						
 					</tr>
 				
 				</c:forEach>
-						
+					
 			</table>
-				
+			
 		</div>
 	
 	</div>

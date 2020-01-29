@@ -22,6 +22,18 @@
   	<description></description>
   	<servlet-class>crm.controller.HomeController</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>UpdateController</servlet-name>
+  	<display-name>UpdateController</display-name>
+  	<description></description>
+  	<servlet-class>crm.controller.UpdateController</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>CustomerUpdateController</servlet-name>
+  	<display-name>CustomerUpdateController</display-name>
+  	<description></description>
+  	<servlet-class>crm.controller.CustomerUpdateController</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>CustomerController</servlet-name>
   	<url-pattern>/controller.do</url-pattern>
@@ -33,6 +45,14 @@
   <servlet-mapping>
   	<servlet-name>HomeController</servlet-name>
   	<url-pattern>/homecontroller.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>UpdateController</servlet-name>
+  	<url-pattern>/updateCustomer.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>CustomerUpdateController</servlet-name>
+  	<url-pattern>/customerUpdate.do</url-pattern>
   </servlet-mapping>
  
 </web-app>

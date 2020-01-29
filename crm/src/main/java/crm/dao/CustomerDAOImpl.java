@@ -40,4 +40,22 @@ public class CustomerDAOImpl implements CustomerDAO{
 		return query.getResultList();
 	}
 
+	@Override
+	public Customer findBuyId(int id) {
+		entityManager.getTransaction().begin();
+		Customer c=entityManager.find(Customer.class, id);
+		entityManager.getTransaction().commit();
+		return c;
+		
+		
+	}
+
+	@Override
+	public void update(Customer customer) {
+		entityManager.getTransaction().begin();
+		entityManager.merge(customer);
+		entityManager.getTransaction().commit();
+		
+	}
+
 }
