@@ -20,7 +20,7 @@
 		<h3>Save Customer</h3>
 	
 		<form action="customerUpdate.do" method="POST">
-		
+		<input type="hidden" value="${customer.id}" name="id">
 			<table>
 				<tbody>
 					<tr>
@@ -39,7 +39,7 @@
 					</tr>
 
 					<tr>
-					<input type="hidden" value="${customer.id}" name="id">
+					
 						<td><label></label></td>
 						<td><input type="submit" value="Update" class="save" /></td>
 					</tr>
@@ -47,7 +47,7 @@
 				
 				</tbody>
 			</table>
-		>
+	
 		
 		</form>
 		</div>

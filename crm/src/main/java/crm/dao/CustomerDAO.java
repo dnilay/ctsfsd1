@@ -12,4 +12,5 @@ public interface CustomerDAO {
 	public Customer findBuyId(int id);
 	
 	public void update(Customer customer);
+	public void delete(Customer customer);
 }
