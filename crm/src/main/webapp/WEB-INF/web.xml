@@ -16,6 +16,12 @@
   	<description></description>
   	<servlet-class>crm.view.CustomerView</servlet-class>
   </servlet>
+  <servlet>
+  	<servlet-name>HomeController</servlet-name>
+  	<display-name>HomeController</display-name>
+  	<description></description>
+  	<servlet-class>crm.controller.HomeController</servlet-class>
+  </servlet>
   <servlet-mapping>
   	<servlet-name>CustomerController</servlet-name>
   	<url-pattern>/controller.do</url-pattern>
@@ -24,5 +30,9 @@
   	<servlet-name>CustomerView</servlet-name>
   	<url-pattern>/success.view</url-pattern>
   </servlet-mapping>
-  
+  <servlet-mapping>
+  	<servlet-name>HomeController</servlet-name>
+  	<url-pattern>/homecontroller.do</url-pattern>
+  </servlet-mapping>
+ 
 </web-app>
