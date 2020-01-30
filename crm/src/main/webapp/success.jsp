@@ -9,7 +9,7 @@
 <html>
 <head>
 <meta charset="ISO-8859-1">
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" >
 <title>all customers</title>
 </head>
 <body>
@@ -24,7 +24,11 @@
   </thead>
 <%
 
-List<Customer> list=(List<Customer>)request.getAttribute("SUCCESS");
+
+Object object=request.getAttribute("SUCCESS");
+
+	List<Customer> list=(List<Customer>)object;
+
 Customermapper impl=new Customermapper();
 for(Customer c:list){
 CustomerDto dto=impl.customerToCustomerDto(c);%>

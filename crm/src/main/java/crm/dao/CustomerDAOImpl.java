@@ -7,9 +7,7 @@ import javax.persistence.Query;
 
 import org.hibernate.Session;
 
-import crm.mapper.Customermapper;
 import crm.model.Customer;
-import crm.model.CustomerDto;
 import crm.util.CustomerUtil;
 
 public class CustomerDAOImpl implements CustomerDAO{
@@ -34,6 +32,7 @@ public class CustomerDAOImpl implements CustomerDAO{
 		return customer;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<Customer> getAllCustomer() {
 		Query query=entityManager.createQuery("from Customer",Customer.class);

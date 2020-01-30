@@ -1,0 +1,68 @@
+<!DOCTYPE web-app PUBLIC
+ "-//Sun Microsystems, Inc.//DTD Web Application 2.3//EN"
+ "http://java.sun.com/dtd/web-app_2_3.dtd" >
+
+<web-app>
+  <display-name>Archetype Created Web Application</display-name>
+  <servlet>
+  	<servlet-name>CustomerController</servlet-name>
+  	<display-name>CustomerController</display-name>
+  	<description></description>
+  	<servlet-class>crm.controller.CustomerController</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>CustomerView</servlet-name>
+  	<display-name>CustomerView</display-name>
+  	<description></description>
+  	<servlet-class>crm.view.CustomerView</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>HomeController</servlet-name>
+  	<display-name>HomeController</display-name>
+  	<description></description>
+  	<servlet-class>crm.controller.HomeController</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>UpdateController</servlet-name>
+  	<display-name>UpdateController</display-name>
+  	<description></description>
+  	<servlet-class>crm.controller.UpdateController</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>CustomerUpdateController</servlet-name>
+  	<display-name>CustomerUpdateController</display-name>
+  	<description></description>
+  	<servlet-class>crm.controller.CustomerUpdateController</servlet-class>
+  </servlet>
+  <servlet>
+  	<servlet-name>DeleteServlet</servlet-name>
+  	<display-name>DeleteServlet</display-name>
+  	<description></description>
+  	<servlet-class>crm.controller.DeleteServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+  	<servlet-name>CustomerController</servlet-name>
+  	<url-pattern>/controller.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>CustomerView</servlet-name>
+  	<url-pattern>/success.view</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>HomeController</servlet-name>
+  	<url-pattern>/homecontroller.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>UpdateController</servlet-name>
+  	<url-pattern>/updateCustomer.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>CustomerUpdateController</servlet-name>
+  	<url-pattern>/customerUpdate.do</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+  	<servlet-name>DeleteServlet</servlet-name>
+  	<url-pattern>/deleteCustomer.do</url-pattern>
+  </servlet-mapping>
+ 
+</web-app>

@@ -1,7 +1,6 @@
 package crm.controller;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -34,7 +33,7 @@ public class CustomerUpdateController extends HttpServlet {
 	}
 protected void doProcess(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		response.setContentType("text/html");
-		PrintWriter out=response.getWriter();
+		
 		Customer customer=service.findBuyId(Integer.parseInt(request.getParameter("id")));
 		customer.setFirstName(request.getParameter("fName"));
 		customer.setLastName(request.getParameter("lName"));
