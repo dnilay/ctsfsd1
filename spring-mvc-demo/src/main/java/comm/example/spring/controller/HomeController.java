@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class HomeController {
 
 	@RequestMapping("/")
-	public String goToHome()
-	{
-		return "home";
+	public String showPage() {
+		return "main-menu";
 	}
 }
