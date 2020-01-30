@@ -6,11 +6,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 public class HomeController {
-
-	@RequestMapping( method = RequestMethod.GET,path = "/" 
 	
-)
-	public String showPage() {
+	@RequestMapping(method = RequestMethod.GET,path = "/")
+	public String home()
+	{
 		return "main-menu";
 	}
+
 }
