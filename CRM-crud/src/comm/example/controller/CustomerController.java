@@ -14,14 +14,14 @@ import comm.example.entity.Customer;
 import comm.example.service.CustomerService;
 
 @Controller
-//@RequestMapping("/customer")
+@RequestMapping("/customer")
 public class CustomerController {
 
 	// need to inject our customer service
 	@Autowired
 	private CustomerService customerService;
 	
-	@GetMapping("/")
+	@GetMapping("/list")
 	public String listCustomers(Model theModel) {
 		
 		// get customers from the service

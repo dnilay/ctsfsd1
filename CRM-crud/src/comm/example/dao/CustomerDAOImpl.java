@@ -39,7 +39,7 @@ public class CustomerDAOImpl implements CustomerDAO {
 	public void saveCustomer(Customer theCustomer) {
 
 		// get current hibernate session
-		Session currentSession = sessionFactory.getCurrentSession();
+		Session currentSession = sessionFactory.openSession();
 		
 		// save the customer ... finally LOL
 		currentSession.save(theCustomer);
