@@ -13,12 +13,11 @@
 	<form:form action="processForm" modelAttribute="student">
 	
 		First name: <form:input path="firstName" />
-		<form:errors path="firstName"/>
 		
 		<br><br>
 	
 		Last name: <form:input path="lastName" />
-		<form:errors path="lastName"/>
+		
 		<br><br>
 	
 		Country:

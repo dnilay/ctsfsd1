@@ -1,0 +1,6 @@
+comm\example\entity\Customer.class
+comm\example\controller\CustomerController.class
+comm\example\dao\CustomerDAO.class
+comm\example\service\CustomerService.class
+comm\example\dao\CustomerDAOImpl.class
+comm\example\service\CustomerServiceImpl.class
