@@ -9,6 +9,6 @@
 </head>
 <body>
 
-Student Name:${message}
+Student First Name:${student.firstName}
 </body>
 </html>
