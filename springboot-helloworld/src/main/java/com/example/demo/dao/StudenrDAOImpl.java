@@ -15,11 +15,6 @@ import com.example.demo.entity.Student;
 public class StudenrDAOImpl implements StudentDAO {
 	@Autowired
 	private EntityManager entityManager;	
-	
-
-
-
-	
 	@Override
 	@Transactional
 	public Student createStudent(Student student) {
