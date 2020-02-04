@@ -1,6 +1,7 @@
 {
 	"id": 100,
 	"firstName": "John",
-	"lastName": "Doe"
+	"lastName": "Doe",
+	"active": true
 	
 }
