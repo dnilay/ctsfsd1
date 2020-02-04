@@ -11,3 +11,4 @@ public class SpringbootHelloworld1Application {
 	}
 
 }
+class A implements
