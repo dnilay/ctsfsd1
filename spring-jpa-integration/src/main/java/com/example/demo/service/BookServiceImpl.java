@@ -47,4 +47,16 @@ public class BookServiceImpl implements BookService {
 		return bookDAO.save(book);
 	}
 
+	@Override
+	public void deleteBookById(Integer bookId) {
+		bookDAO.deleteById(bookId);
+		
+	}
+
+	@Override
+	public void deleteAll() {
+		bookDAO.deleteAll();
+		
+	}
+
 }
