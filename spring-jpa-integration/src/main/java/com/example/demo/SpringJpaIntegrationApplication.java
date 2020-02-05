@@ -1,8 +1,10 @@
 package com.example.demo;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
 public class SpringJpaIntegrationApplication implements CommandLineRunner {
@@ -29,7 +31,9 @@ public class SpringJpaIntegrationApplication implements CommandLineRunner {
 		 */
 	
 	}
-
+	/*
+	 * @Bean public ModelMapper modelMapper() { return new ModelMapper(); }
+	 */
 	
 	
 }

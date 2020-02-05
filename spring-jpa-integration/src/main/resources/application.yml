@@ -2,4 +2,4 @@ spring:
   application:
     name: spring-jpa  datasource:    url: jdbc:mysql://localhost:3306/hr
     username: root
-    password: root 
+    password: root  jpa:    hibernate:      ddl-auto: create    show-sql: true
