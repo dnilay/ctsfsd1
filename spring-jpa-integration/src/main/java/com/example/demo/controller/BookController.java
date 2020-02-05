@@ -91,4 +91,23 @@ public class BookController {
 	{
 		bookService.deleteAll();
 	}
+	@GetMapping("/books/findByAuthor/{author}")
+	public List<Book> findByAuthor(@PathVariable String author)
+	{
+		return bookService.findByAuthor(author);
+	}
+	@GetMapping("/books/findByBookName/{bookName}")
+	public List<Book> findByBookName(@PathVariable String bookName)
+	{
+		return bookService.findByBookName(bookName);
+	}
+	@GetMapping("/books/findByAuthorAndBookName/{author}/{bookName}")
+	public List<Book> findByBookName(@PathVariable String author,@PathVariable String bookName)
+	{
+		return bookService.findByAuthorAndBookName(author, bookName);
+	}
+	
+	
+	
+	
 }
