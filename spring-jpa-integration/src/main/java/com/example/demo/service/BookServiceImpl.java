@@ -37,6 +37,7 @@ public class BookServiceImpl implements BookService {
 	public Optional<Book>  getBookById(Integer bookId) {
 		
 		Optional<Book> book=bookDAO.findById(bookId);
+		
 		return book;
 	}
 

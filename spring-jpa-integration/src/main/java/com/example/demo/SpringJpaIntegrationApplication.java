@@ -26,12 +26,12 @@ public class SpringJpaIntegrationApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		
-		bookDAO.save(new Book(100,"Book-1","Author-1"));
-		bookDAO.save(new Book(101,"Book-2","Author-2"));
-		bookDAO.save(new Book(102,"Book-3","Author-3"));
-		bookDAO.save(new Book(103,"Book-4","Author-4"));
-		bookDAO.save(new Book(104,"Book-5","Author-5"));
-		bookDAO.save(new Book(105,"Book-6","Author-6"));
+		bookDAO.save(new Book("Book-1","Author-1"));
+		bookDAO.save(new Book("Book-2","Author-2"));
+		bookDAO.save(new Book("Book-3","Author-3"));
+		bookDAO.save(new Book("Book-4","Author-4"));
+		bookDAO.save(new Book("Book-5","Author-5"));
+		bookDAO.save(new Book("Book-6","Author-6"));
 	
 	}
 

@@ -18,6 +18,8 @@ public class Book {
 	private int bookId;
 	private String bookName;
 	private String author;
+	
+	
 	public int getBookId() {
 		return bookId;
 	}
@@ -34,6 +36,11 @@ public class Book {
 		return author;
 	}
 	public void setAuthor(String author) {
+		this.author = author;
+	}
+	public Book(String bookName, String author) {
+		super();
+		this.bookName = bookName;
 		this.author = author;
 	}
 	
