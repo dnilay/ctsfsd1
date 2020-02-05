@@ -41,4 +41,10 @@ public class BookServiceImpl implements BookService {
 		return book;
 	}
 
+	@Override
+	public Book createBook(Book book) {
+		// TODO Auto-generated method stub
+		return bookDAO.save(book);
+	}
+
 }
