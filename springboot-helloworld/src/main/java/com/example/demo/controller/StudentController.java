@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.example.demo.dao.StudentDAO;
-import com.example.demo.dto.StudentDTO;
 import com.example.demo.entity.Student;
 
 @Controller

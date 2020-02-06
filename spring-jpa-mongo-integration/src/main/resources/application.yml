@@ -1,0 +1,6 @@
+spring:
+  data:
+    mongodb:
+      database: demo-database
+      port: 27017
+      host: localhost
