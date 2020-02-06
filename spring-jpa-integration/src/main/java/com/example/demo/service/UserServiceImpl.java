@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.Optional;
+
 import javax.transaction.Transactional;
 
 import org.modelmapper.ModelMapper;
@@ -40,9 +42,10 @@ public class UserServiceImpl implements UserService{
 
 	@Override
 	@Transactional
-	public SharedUser findUserById(Integer id) {
+	public Optional<User> findUserById(Integer id) {
 		// TODO Auto-generated method stub
-		return modelMapper.map(userDAO.findById(id), SharedUser.class);
+		Optional<User> user=userDAO.findById(id);
+		System.out.println(user);
+		return user;
 	}
-
 }

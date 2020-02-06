@@ -2,8 +2,11 @@ package com.example.demo.controller;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,7 +23,12 @@ import com.example.demo.shared.SharedUser;
 @RequestMapping("/api")
 public class UserController {
 	private UserService userService;
-
+private ModelMapper modelMapper;
+	
+	{
+		modelMapper=new ModelMapper();
+		modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
+	}
 	@Autowired
 	public UserController(UserService userService) {
 		super();
@@ -29,7 +37,8 @@ public class UserController {
 	@GetMapping("/users/{id}")
 	public SharedUser find(@PathVariable Integer id)
 	{
-		return userService.findUserById(id);
+		 Optional<User> user=userService.findUserById(id);
+		return modelMapper.map(user, SharedUser.class);
 	}
 	@PostMapping("/users")
 	public SharedUser create(@RequestBody User user)
