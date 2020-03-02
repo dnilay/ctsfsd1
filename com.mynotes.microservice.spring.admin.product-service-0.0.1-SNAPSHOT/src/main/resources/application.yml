@@ -1,0 +1,23 @@
+
+      
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+server:
+  port: 8060
+spring:
+  application:
+    name: product-service
+  boot:
+    admin:
+      client:
+        url: http://localhost:9000
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
