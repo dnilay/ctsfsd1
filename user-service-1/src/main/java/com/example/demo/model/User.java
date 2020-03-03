@@ -17,22 +17,28 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 	@Column(name = "last_name")
-	private String lName;
+	private String lastname;
 	@Column(name = "fast_name")
-	private String fName;
+	private String firstname;
 	private String email;
 	
 	
-	public User(String lName, String fName, String email) {
-		super();
-		this.lName = lName;
-		this.fName = fName;
-		this.email = email;
-	}
+	
 
 
 	public User() {
 		super();
+	}
+
+
+
+
+
+	public User(String lastname, String firstname, String email) {
+		super();
+		this.lastname = lastname;
+		this.firstname = firstname;
+		this.email = email;
 	}
 
 }

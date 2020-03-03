@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import java.util.Optional;
+
 import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Service;
@@ -27,4 +29,26 @@ public class UserServiceImpl implements UserService{
 		return userDAO.findAll();
 	}
 
+	@Override
+	@Transactional
+	public Optional<User> findByLastnameOrFirstname(String lastname, String firstname) {
+		// TODO Auto-generated method stub
+		return userDAO.findByLastnameOrFirstname(lastname, firstname);
+	}
+
+	@Override
+	@Transactional
+	public Optional<User> findByEmail(String email) {
+		// TODO Auto-generated method stub
+		return userDAO.findByEmail(email);
+	}
+
+	@Override
+	@Transactional
+	public User createUser(User user) {
+		// TODO Auto-generated method stub
+		return userDAO.save(user);
+	}
+
+	
 }
