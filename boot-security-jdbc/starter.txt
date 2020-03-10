@@ -1,0 +1,28 @@
+{
+	"userName":"superman",
+	"password":"super",
+	"roles":"ROLE_ADMIN"
+}
+#JSON for USER role
+{
+	"userName":"ironman",
+	"password":"iron",
+	"roles":"ROLE_USER"
+}
+
+
+
+CREATE TABLE `users` (
+  `username` VARCHAR(50) NOT NULL,
+  `password` VARCHAR(120) NOT NULL,
+  `enabled` TINYINT(1) NOT NULL,
+  PRIMARY KEY (`username`)
+);
+-- authorities table structure
+CREATE TABLE `authorities` (
+  `username` VARCHAR(50) NOT NULL,
+  `authority` VARCHAR(50) NOT NULL,
+  KEY `username` (`username`),
+  CONSTRAINT `authorities_ibfk_1` FOREIGN KEY (`username`)
+  REFERENCES `users` (`username`)
+);
