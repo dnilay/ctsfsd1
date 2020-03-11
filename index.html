@@ -1,0 +1,5314 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <script src="index_files/tigris.txt" type="text/javascript"></script>
+    <link rel="stylesheet" type="text/css"
+      href="index_files/netbeans.css">
+    <title>LAB-1661: Build your own Docker image</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Style-Type" content="text/css">
+    <meta name="SourceCastVersion" content="2.6.2.4.10">
+    <meta name="keywords" content="NetBeans, IDE, Platform, free, open
+      source, developer">
+    <link rel="stylesheet" href="index_files/netbeans_002.css">
+    <meta name="author" content="Sang Shin">
+    <style type="text/css">
+#search {height:100%;}
+#topmodule {align:right;}
+  </style>
+    <script language="JavaScript" type="text/javascript">
+<!--
+function get_sc_login() {
+  var sclogin = "guest";
+  return (sclogin);
+}
+var username=get_sc_login();
+//-->
+  </script>
+  </head>
+  <body onload="loginfocus()" class="composite">
+    <br>
+    <div style="text-align: center;">@Copyright notice: This content is
+      meant to be used only for paying subscriber's personal
+      consumption. And any shape or or form of sharing with others is
+      strictly prohibited&nbsp; unless a special licensing arrangement
+      has been made with <a href="mailto:support@jpassion.com">JPassion.com</a>.<!-- begin TopTabs --><!-- end TopTabs --><!-- start NavCol --><!-- end NavCol --><!-- Servlet-Specific template --><!-- Show servlet name if it is a servlet -->
+      <br>
+    </div>
+    <br>
+    <h1 style="text-align: center;">Build your own Docker image<br>
+    </h1>
+    <div class="articledate" style="margin-left: 0px; text-align:
+      center;"><a href="http://www.jpassion.com/">jpassion.com</a>, <a
+        href="http://groups.google.com/group/jpassion_docker">class
+        forum</a><br>
+      <br>
+      <img alt="" src="index_files/sangshin2009.jpg" style="width: 88px;
+        height: 101px;"><br>
+      <a href="mailto:sang.shin@sun.com"><i></i></a></div>
+    <br>
+    <p style="margin-left: 40px;">So far you have learned how to run
+      images built by someone else.&nbsp; In this lab, you are going to
+      build your own Docker images starting with a simple Java
+      application and then Web application. </p>
+    <br>
+    <p></p>
+    <p align="center"><b>Expected duration: 120 minutes<br>
+        <br>
+      </b></p>
+    <div class="indent">
+      <h3 class="tutorial">Resources<br>
+      </h3>
+      <ul>
+        <li>Tutorials</li>
+        <ul>
+          <li><a
+              href="https://docs.docker.com/engine/reference/builder/">Dockerfile
+
+
+
+
+
+              reference</a> section from docs.docker.com<br>
+          </li>
+          <li><a
+href="https://codefresh.io/blog/java_docker_pipeline/?gclid=Cj0KEQjw5YfHBRDzjNnioYq3_swBEiQArj4pdMIRmNZnMfaCakJucOtj4x8u4s7rPEL3j84qxWmaFMMaAkL08P8HAQ">Crafting
+
+
+
+
+
+
+
+
+
+
+              perfect Java Docker build flow</a> tutorial (March 2017)</li>
+          <li><a
+              href="https://github.com/jiwhiz/spring-boot-docker-mysql">Spring
+
+
+
+
+
+
+
+              boot docker and mysql</a> tutorial (March 2016)</li>
+          <li><a
+              href="http://goinbigdata.com/docker-run-vs-cmd-vs-entrypoint/">Docker
+
+
+
+              RUN vs COMMAND vs ENTRYPOINT</a> tutorial (April 2016)<br>
+          </li>
+        </ul>
+        <ul>
+        </ul>
+      </ul>
+      <br>
+      <h3 class="tutorial"><a name="Change_Log"></a>Change Log<br>
+      </h3>
+      <ul>
+        <li>April 1st, 2017: Created (Sang Shin)</li>
+        <li>May 17th, 2017: Some trouble-shooting tips are added, some
+          cosmetic changes are made (Sang Shin)<br>
+        </li>
+      </ul>
+      <br>
+      <h3 class="tutorial"><a name="Tutorial_Exercises"></a>Lab
+        Exercises</h3>
+      <ul>
+        <li><a href="#Exercise_1">Exercise 1: Build and run a simple
+            Java SE application (20 minutes)</a></li>
+        <li><a href="#Exercise_2">Exercise 2: Update the image (20
+            minutes)</a></li>
+        <li><a href="#Exercise_3">Exercise 3: Build and run a simple
+            Java SE Maven project (20 minutes)</a><br>
+        </li>
+        <li><a href="#Exercise_4">Exercise 4: Build and run a simple
+            Spring Boot Java SE application (20 minutes)<br>
+          </a></li>
+        <li><a href="#Exercise_5">Exercise 5: Build and run Spring Boot
+            Web application (20 minutes)</a><br>
+        </li>
+        <li><a href="#Exercise_6">Exercise 6: Push image to the Docker
+            Hub (20 minutes)</a><br>
+        </li>
+        <li><a href="#Homework">Homework Exercise</a></li>
+      </ul>
+      <ul>
+      </ul>
+      <br>
+      <ul>
+        <ul>
+        </ul>
+      </ul>
+    </div>
+    <!-- ===================================================================================== -->
+    <h2><a name="Exercise_1"></a>Exercise 1: Build and run a simple Java
+      SE application example<br>
+    </h2>
+    <div style="margin-left: 40px;"> <br>
+      In this exercise, you are going to build and run a simplest
+      possible Java SE Helloworld like application.<br>
+      <ol start="0">
+        <li><a href="#1.0">Create a project directory</a><br>
+        </li>
+        <li><a href="#1.1">Write Java code</a></li>
+        <li><a href="#1.2">Create Dockerfile</a></li>
+        <li><a href="#1.3">Build Docker image</a></li>
+        <li><a href="#1.4">Run the image</a></li>
+        <li><a href="#1.5">For your own exercise</a><br>
+        </li>
+      </ol>
+      <span style="text-decoration: underline;"><span
+          style="font-weight: bold;"> <br>
+        </span></span></div>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="1.0"></a>(1.0)
+
+
+
+
+
+
+
+
+
+      Create project directory<br>
+    </h3>
+    <div style="margin-left: 40px;"><br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs&gt;<b>mkdir docker-helloworld</b><br>
+              <br>
+              C:\labs&gt;<b>cd docker-helloworld</b><br>
+              <br>
+              C:\labs\docker-helloworld&gt;<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_1">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <ul>
+      </ul>
+    </div>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="1.1"></a>(1.1)
+
+
+
+
+
+
+
+
+
+      Write Java code<br>
+    </h3>
+    <blockquote> 1. Using your favorite editor of your choice, write
+      Hello.java<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">class Hello {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public static
+              void main(String[] args) {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+              System.out.println("Hello, JPassion.com!");<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+              }<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_1">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+    </blockquote>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="1.2"></a>(1.2)
+
+
+
+
+
+
+
+
+
+      Create Dockerfile</h3>
+    <blockquote>1. Using your favorite editor of your choice, write
+      Dockerfile <br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">FROM java<br>
+              MAINTAINER Sang Shin<br>
+              COPY . /usr/src/<br>
+              WORKDIR /usr/src/<br>
+              RUN javac Hello.java<br>
+              CMD ["java", "Hello"]</td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Verify that the Dockerfile has been created<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker-helloworld&gt;dir<br>
+              &nbsp;Volume in drive C is OS<br>
+              &nbsp;Volume Serial Number is 0A32-A76F<br>
+              <br>
+              &nbsp;Directory of C:\labs\docker-helloworld<br>
+              <br>
+              04/03/2017&nbsp; 10:58 AM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              .<br>
+              04/03/2017&nbsp; 10:58 AM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              ..<br>
+              04/03/2017&nbsp; 10:58
+              AM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+              113 <b>Dockerfile</b><br>
+              04/03/2017&nbsp; 10:58
+              AM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+              138 Hello.java<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+              2
+              File(s)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+              251 bytes<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+              2 Dir(s)&nbsp; 94,302,638,080 bytes free<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_1">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+    </blockquote>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="1.3"></a>(1.3)
+
+
+
+
+
+
+
+
+
+      Build Docker image<br>
+    </h3>
+    <blockquote> 1. Build Docker image called "my-java-app". Observe
+      that each step in the Dockerfile is executed.&nbsp; The size of
+      "java" image is 643M bytes.&nbsp; So it will take several seconds.<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker-helloworld&gt;<b>docker&nbsp;
+
+
+
+
+                build&nbsp; .&nbsp; -t&nbsp; "my-java-app"</b><br>
+              Sending build context to Docker daemon 3.072 kB<br>
+              <b>Step 1/6 : FROM java</b><br>
+              latest: Pulling from library/java<br>
+              5040bd298390: Pull complete<br>
+              fce5728aad85: Pull complete<br>
+              76610ec20bf5: Pull complete<br>
+              60170fec2151: Pull complete<br>
+              e98f73de8f0d: Pull complete<br>
+              11f7af24ed9c: Pull complete<br>
+              49e2d6393f32: Pull complete<br>
+              bb9cdec9c7f3: Pull complete<br>
+              Digest:
+              sha256:c1ff613e8ba25833d2e1940da0940c3824f03f802c449f3d1815a66b7f8c0e9d<br>
+              Status: Downloaded newer image for java:latest<br>
+              &nbsp;---&gt; d23bdf5b1b1b<br>
+              <b>Step 2/6 : MAINTAINER Sang Shin</b><br>
+              &nbsp;---&gt; Running in 6606eef77d8b<br>
+              &nbsp;---&gt; 30ff869a4f01<br>
+              Removing intermediate container 6606eef77d8b<br>
+              <b>Step 3/6 : COPY . /usr/src/</b><br>
+              &nbsp;---&gt; 1f4da351dbb7<br>
+              Removing intermediate container 9a7918e8ed7b<br>
+              <b>Step 4/6 : WORKDIR /usr/src/</b><br>
+              &nbsp;---&gt; d663ce0f6488<br>
+              Removing intermediate container f846ac17a4bc<br>
+              <b>Step 5/6 : RUN javac Hello.java</b><br>
+              &nbsp;---&gt; Running in c33ba76fc6d6<br>
+              &nbsp;---&gt; f8366e406c29<br>
+              Removing intermediate container c33ba76fc6d6<br>
+              <b>Step 6/6 : CMD java Hello</b><br>
+              &nbsp;---&gt; Running in eed90495fed9<br>
+              &nbsp;---&gt; 11e64919e1ba<br>
+              Removing intermediate container eed90495fed9<br>
+              Successfully built 11e64919e1ba<br>
+              SECURITY WARNING: You are building a Docker image from
+              Windows against a non-Windows Docker host. All files and
+              directories added to build context will have '-rwxr-xr-x'
+              permissions. It is recommended to double check and reset
+              permissions for sensitive files and directories.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <font color="#ff0000">Trouble-shooting</font>: If you experience
+      the following problem, it is because you have not set up the
+      environment variables. <br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker-helloworld&gt;<b>docker&nbsp;
+
+                build&nbsp; .&nbsp; -t&nbsp; "my-java-app"</b><br>
+              could not read CA certificate
+              "C:\\Users\\sangs\\.docker\\machine\\machines\\swarm-manager1\\ca.pem":
+              open
+              C:\Users\sangs\.docker\machine\machines\swarm-manager1\ca.pem:
+              The system cannot find the path specified.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      <font color="#ff0000">Trouble-shooting</font>: If you experience
+      the following problem, remove the "default" docker machine and
+      then recreate it.<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker-helloworld&gt;<b>docker&nbsp;
+
+                build&nbsp; .&nbsp; -t&nbsp; "my-java-app"</b><br>
+              ..<br>
+              Error response from daemon: Get
+              https://index.docker.io/v1/search?q=ire&amp;n=25: dial
+              tcp: lookup index.docker.io on 10.0.2.3:53: read udp
+              10.0.2.15:33778-&gt;10.0.2.3:53: i/o timeout<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Verify that the image has been built successfully<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker-helloworld&gt;<b>docker
+                images</b><br>
+              REPOSITORY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              TAG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              IMAGE
+              ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              CREATED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              SIZE<br>
+              <b>my-java-app&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+                11e64919e1ba&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                40 seconds ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 643 MB</b><br>
+              nginx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              5e69fe4b3c31&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6
+              days
+              ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              183 MB<br>
+              tomcat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              2da861e12a55&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11
+              days ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              357 MB<br>
+              alpine&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              4a415e366388&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4
+              weeks ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              3.99 MB<br>
+              ubuntu&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              0ef2e08ed3fa&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4
+              weeks ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              130 MB<br>
+              java&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              d23bdf5b1b1b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2
+              months ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 643
+              MB<br>
+              hello-world&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              48b5124b2768&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2
+              months ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1.84
+              kB<br>
+              C:\labs\docker-helloworld&gt;<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_1">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+      <br>
+    </blockquote>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="1.4"></a>(1.4)
+
+
+
+
+
+
+
+
+
+      Run Docker image<br>
+    </h3>
+    <blockquote>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker-helloworld&gt;<b>docker run
+                my-java-app</b><br>
+              Hello, JPassion.com!<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_1">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+      <br>
+    </blockquote>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="1.5"></a>(1.5)
+
+
+
+
+
+      For your own exercise<br>
+    </h3>
+    <blockquote>1. Create a Java application that display current date
+      and time<br>
+      2. Build and run it as a Docker image<br>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_1">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+      <br>
+    </blockquote>
+    <h2><a name="Exercise_2"></a>Exercise 2: Update image<br>
+    </h2>
+    <p style="margin-left: 40px;">In this exercise, you are going to
+      make a change in the Java code and rebuild and run the image.<br>
+    </p>
+    <blockquote>
+      <ol>
+        <li><a href="#2.1">Modify the Java code<br>
+          </a></li>
+        <li><a href="#2.2">Rebuild the image<br>
+          </a></li>
+        <li><a href="#2.3">Rebuild the image with "--rm" option and run
+            it</a></li>
+        <li><a href="#2.4">For your own exercise</a><br>
+        </li>
+      </ol>
+    </blockquote>
+    <div style="margin-left: 40px;"> <br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="2.1"></a>(2.1)
+
+
+
+
+
+
+
+      Modify the Java code<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      1. Update Hello.java<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">class Hello {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; public static
+              void main(String[] args) {<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              System.out.println(<font color="#ff0000"><b>"Code with
+                  Passion!"</b></font>);<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; }<br>
+              }<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <ul>
+      </ul>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_2">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+      <br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="2.2"></a>(2.2)
+
+
+
+
+
+
+
+      Rebuild the image <br>
+    </h3>
+    <div style="margin-left: 40px;"><br>
+      1. Rebuild the image<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker-helloworld&gt;<b>docker
+                build&nbsp; .&nbsp; -t&nbsp; "my-java-app"</b><br>
+              Sending build context to Docker daemon 3.072 kB<br>
+              Step 1/6 : FROM java<br>
+              &nbsp;---&gt; d23bdf5b1b1b<br>
+              Step 2/6 : MAINTAINER Sang Shin<br>
+              &nbsp;---&gt; Using cache<br>
+              &nbsp;---&gt; 30ff869a4f01<br>
+              Step 3/6 : COPY . /usr/src/<br>
+              &nbsp;---&gt; c5ab10ef8b8a<br>
+              Removing intermediate container 278cfcd9f84a<br>
+              Step 4/6 : WORKDIR /usr/src/<br>
+              &nbsp;---&gt; 5abe8c219bc3<br>
+              Removing intermediate container c4e134a6497b<br>
+              Step 5/6 : RUN javac Hello.java<br>
+              &nbsp;---&gt; Running in 2dd1dadce50a<br>
+              &nbsp;---&gt; f0737cbe26cf<br>
+              Removing intermediate container 2dd1dadce50a<br>
+              Step 6/6 : CMD java Hello<br>
+              &nbsp;---&gt; Running in cf524c87090d<br>
+              &nbsp;---&gt; 2f9179ad2e1d<br>
+              Removing intermediate container cf524c87090d<br>
+              Successfully built 2f9179ad2e1d<br>
+              SECURITY WARNING: You are building a Docker image from
+              Windows against a non-Windows Docker host. All files and
+              directories added to build context will have '-rwxr-xr-x'
+              permissions. It is recommended to double check and reset
+              permissions for sensitive files and directories.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <ul>
+      </ul>
+      2. Observe that new message gets displayed<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker-helloworld&gt;<b>docker run
+                my-java-app</b><br>
+              Code with Passion!</td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_2">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+      <br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="2.3"></a>(2.3)
+
+
+
+
+      Modify the Dockerfile<br>
+    </h3>
+    <div style="margin-left: 40px;"><br>
+      1. Modify Dockerfile.&nbsp; The modification is to use JRE rather
+      than JDK.<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">FROM<font color="#ff0000"><b>
+                  openjdk:8-jre-alpine</b></font><br>
+              MAINTAINER Sang Shin<br>
+              COPY . /usr/src/<br>
+              WORKDIR /usr/src/<br>
+              RUN javac Hello.java<br>
+              CMD ["java", "Hello"]<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Build it again and observe the error.&nbsp; <br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker-helloworld&gt;<b>docker
+                build&nbsp; .&nbsp; -t&nbsp; "my-java-app"</b><br>
+              Sending build context to Docker daemon 3.072 kB<br>
+              Step 1/6 : FROM openjdk:8-jre-alpine<br>
+              8-jre-alpine: Pulling from library/openjdk<br>
+              627beaf3eaaf: Already exists<br>
+              1de20f2d8b83: Pull complete<br>
+              74e619d34827: Pull complete<br>
+              Digest:
+              sha256:e663151c5fdfa89bda49af65b3d477fa1433491290cd35c8f09afa16072f35c4<br>
+              Status: Downloaded newer image for openjdk:8-jre-alpine<br>
+              &nbsp;---&gt; c017141bdaa8<br>
+              Step 2/6 : MAINTAINER Sang Shin<br>
+              &nbsp;---&gt; Running in 5c3e6591dc81<br>
+              &nbsp;---&gt; 0fbe4716fa87<br>
+              Removing intermediate container 5c3e6591dc81<br>
+              Step 3/6 : COPY . /usr/src/<br>
+              &nbsp;---&gt; 0a12718b2787<br>
+              Removing intermediate container 29a9d42c043b<br>
+              Step 4/6 : WORKDIR /usr/src/<br>
+              &nbsp;---&gt; 1c3b51c4c933<br>
+              Removing intermediate container 9cfca6bf8768<br>
+              Step 5/6 : RUN javac Hello.java<br>
+              &nbsp;---&gt; Running in dfcbdd463959<br>
+              <font color="#ff0000"><b>/bin/sh: javac: not found</b></font><br>
+              The command '/bin/sh -c javac Hello.java' returned a
+              non-zero code: 127</td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      3. Build it locally <br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker-helloworld&gt;<b>javac
+                Hello.java</b><br>
+              <br>
+              C:\labs\docker-helloworld&gt;dir<br>
+              &nbsp;Volume in drive C is OS<br>
+              &nbsp;Volume Serial Number is 0A32-A76F<br>
+              <br>
+              &nbsp;Directory of C:\labs\docker-helloworld<br>
+              <br>
+              04/07/2017&nbsp; 08:00 AM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              .<br>
+              04/07/2017&nbsp; 08:00 AM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              ..<br>
+              04/07/2017&nbsp; 07:56
+              AM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              129 Dockerfile<br>
+              04/07/2017&nbsp; 08:00
+              AM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              425 <b>Hello.class</b><br>
+              04/07/2017&nbsp; 07:53
+              AM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              139 Hello.java<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              3
+              File(s)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              693 bytes<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              2 Dir(s)&nbsp; 90,337,677,312 bytes free</td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      4. Modify Dockerfile - comment out the line of "RUN javac
+      Hello.java"<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">FROM openjdk:8-jre-alpine<br>
+              MAINTAINER Sang Shin<br>
+              COPY . /usr/src/<br>
+              WORKDIR /usr/src/<br>
+              <b>#RUN javac Hello.java</b><br>
+              CMD ["java", "Hello"]<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      5. Rebuild it and observe the success <br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker-helloworld&gt;<b>docker
+                build&nbsp; .&nbsp; -t&nbsp; "my-java-app"</b><br>
+              Sending build context to Docker daemon 4.096 kB<br>
+              Step 1/5 : FROM openjdk:8-jre-alpine<br>
+              &nbsp;---&gt; c017141bdaa8<br>
+              Step 2/5 : MAINTAINER Sang Shin<br>
+              &nbsp;---&gt; Using cache<br>
+              &nbsp;---&gt; 0fbe4716fa87<br>
+              Step 3/5 : COPY . /usr/src/<br>
+              &nbsp;---&gt; 267b0de14e60<br>
+              Removing intermediate container a19958755974<br>
+              Step 4/5 : WORKDIR /usr/src/<br>
+              &nbsp;---&gt; 235db81088db<br>
+              Removing intermediate container 38bbcab9f2df<br>
+              Step 5/5 : CMD java Hello<br>
+              &nbsp;---&gt; Running in adab9caf68a7<br>
+              &nbsp;---&gt; 387b01bc39e0<br>
+              Removing intermediate container adab9caf68a7<br>
+              Successfully built 387b01bc39e0<br>
+              SECURITY WARNING: You are building a Docker image from
+              Windows against a non-Windows Docker host. All files and
+              directories added to build context will have '-rwxr-xr-x'
+              permissions. It is recommended to double check and reset
+              permissions for sensitive files and directories.<br>
+              <br>
+              C:\labs\docker-helloworld&gt;<b>docker run my-java-app</b><br>
+              time="2017-04-07T08:01:36-04:00" level=info msg="Unable to
+              use system certificate pool: crypto/x509: system root pool
+              is not available on Windows"<br>
+              Code with Passion!<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_2">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+      <br>
+    </div>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="2.4"></a>(2.4)
+
+
+
+
+
+      For your own exercise<br>
+    </h3>
+    <div style="margin-left: 40px;"><br>
+      1. Modify the application you created as "For your own exercise"
+      in Exercise 1 above to display "Hello" message along with data and
+      time<br>
+      2. Rebuild and run the application <br>
+      3. Modify the Dockerfile so that you use JRE instead of JDK<br>
+      4. Rebuild and run the application<br>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_2">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+      <br>
+    </div>
+    <h2><a name="Exercise_3"></a>Exercise 3: Java SE Maven project<br>
+    </h2>
+    <br>
+    <div style="margin-left: 40px;">In this exercise, you are going to
+      build and run Maven-based Java SE application.<br>
+      <ol>
+        <li><a href="#2.3">Build and run the Maven project locally<br>
+          </a></li>
+        <li><a href="#3.2">Create Dockerfile in the project directory<br>
+          </a></li>
+        <li><a href="#3.3">Build Docker image<br>
+          </a></li>
+        <li><a href="#3.4">Run the Docker image<br>
+          </a></li>
+        <li><a href="#3.5">Prune container and images</a><br>
+        </li>
+      </ol>
+    </div>
+    <p style="margin-left: 40px;"></p>
+    <ul>
+      <ul>
+      </ul>
+      <ol>
+      </ol>
+    </ul>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="3.1"></a>(3.1)
+
+
+
+
+
+
+
+      Build and run the Maven project<br>
+    </h3>
+    <blockquote>In this step, you are going to build and run the Maven
+      project just to make sure it is a working Maven project.<br>
+      <br>
+      0. Go to the "samples_maven\docker-java-maven-project" directory
+      of the hands-on lab.<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:&gt;<b>cd
+                C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project</b></td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      1. Do a clean build<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project&gt;<b>mvn
+
+
+
+
+
+
+
+                clean package</b><br>
+              [INFO] Scanning for projects...<br>
+              [INFO]<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO] Building MyDaysOfTheWeekProject 1.0-SNAPSHOT<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO]<br>
+              [INFO] --- maven-clean-plugin:2.4.1:clean (default-clean)
+              @ MyDaysOfTheWeekProject ---<br>
+              [INFO] Deleting
+C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project\target<br>
+              [INFO]<br>
+              [INFO] --- maven-resources-plugin:2.4.3:resources
+              (default-resources) @ MyDaysOfTheWeekProject ---<br>
+              [INFO] Using 'UTF-8' encoding to copy filtered resources.<br>
+              [INFO] skip non existing resourceDirectory
+C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project\src\main\resources<br>
+              [INFO]<br>
+              [INFO] --- maven-compiler-plugin:2.3.2:compile
+              (default-compile) @ MyDaysOfTheWeekProject ---<br>
+              [INFO] Compiling 1 source file to
+C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project\target\classes<br>
+              [INFO]<br>
+              [INFO] --- maven-resources-plugin:2.4.3:testResources
+              (default-testResources) @ MyDaysOfTheWeekProject ---<br>
+              [INFO] Using 'UTF-8' encoding to copy filtered resources.<br>
+              [INFO] skip non existing resourceDirectory
+C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project\src\test\resources<br>
+              [INFO]<br>
+              [INFO] --- maven-compiler-plugin:2.3.2:testCompile
+              (default-testCompile) @ MyDaysOfTheWeekProject ---<br>
+              [INFO] Compiling 1 source file to
+C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project\target\test-classes<br>
+              [INFO]<br>
+              [INFO] --- maven-surefire-plugin:2.7.2:test (default-test)
+              @ MyDaysOfTheWeekProject ---<br>
+              [INFO] Surefire report directory:
+C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project\target\surefire-reports<br>
+              <br>
+              -------------------------------------------------------<br>
+              &nbsp;T E S T S<br>
+              -------------------------------------------------------<br>
+              Running mypackage.AppTest<br>
+              Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time
+              elapsed: 0.01 sec<br>
+              <br>
+              Results :<br>
+              <br>
+              Tests run: 1, Failures: 0, Errors: 0, Skipped: 0<br>
+              <br>
+              [INFO]<br>
+              [INFO] --- maven-jar-plugin:2.3.1:jar (default-jar) @
+              MyDaysOfTheWeekProject ---<br>
+              [INFO] Building jar:
+C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project\target\MyDaysOfTheWeekProject-1.0-SNAPSHOT.jar<br>
+              [INFO]<br>
+              ...<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO] BUILD SUCCESS<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO] Total time: 3.068s<br>
+              [INFO] Finished at: Mon Apr 03 11:52:11 EDT 2017<br>
+              [INFO] Final Memory: 17M/170M<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Run the project<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project&gt;<b>java
+
+
+
+
+
+
+
+                -cp target/MyDaysOfTheWeekProject-1.0-SNAPSHOT.jar </b><b>mypackage.DaysOfTheWeek</b><br>
+              Display days of week using while loop<br>
+              Sunday<br>
+              Monday<br>
+              Tuesday<br>
+              Wednesday<br>
+              Thursday<br>
+              Friday<br>
+              Saturday<br>
+              Display days of week using do-while loop<br>
+              Sunday<br>
+              Monday<br>
+              Tuesday<br>
+              Wednesday<br>
+              Thursday<br>
+              Friday<br>
+              Saturday<br>
+              Display days of week using for loop<br>
+              Sunday<br>
+              Monday<br>
+              Tuesday<br>
+              Wednesday<br>
+              Thursday<br>
+              Friday<br>
+              Saturday<br>
+              <br>
+C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project&gt;<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_3">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+    </blockquote>
+    <div style="margin-left: 40px;">
+      <ul>
+      </ul>
+      <br>
+      <br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="3.2"></a>(3.2)
+
+
+
+
+
+
+
+      Create Dockerfile in the project directory<br>
+    </h3>
+    <div style="margin-left: 40px;"><br>
+      1. Create <b>Dockerfile </b>with the following content<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">FROM openjdk:8-jre-alpine<br>
+              COPY target/MyDaysOfTheWeekProject-1.0-SNAPSHOT.jar
+              /usr/share<br>
+              WORKDIR /usr/share<br>
+              ENTRYPOINT ["java","-cp",
+              "MyDaysOfTheWeekProject-1.0-SNAPSHOT.jar",
+              "mypackage.DaysOfTheWeek"]</td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Verify that the Dockerfile has been created<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project&gt;dir<br>
+              &nbsp;Volume in drive C is OS<br>
+              &nbsp;Volume Serial Number is 0A32-A76F<br>
+              <br>
+              &nbsp;Directory of
+              C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project<br>
+              <br>
+              04/03/2017&nbsp; 11:52 AM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              .<br>
+              04/03/2017&nbsp; 11:52 AM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              ..<br>
+              06/15/2015&nbsp; 09:08
+              PM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              1,224 .classpath<br>
+              06/15/2015&nbsp; 09:08
+              PM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              574 .project<br>
+              04/03/2017&nbsp; 11:49 AM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              .settings<br>
+              04/03/2017&nbsp; 08:32
+              AM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              192 <b>Dockerfile</b><br>
+              07/18/2012&nbsp; 11:28
+              AM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              785 pom.xml<br>
+              04/03/2017&nbsp; 11:49 AM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              src<br>
+              04/03/2017&nbsp; 11:52 AM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              target<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              4
+              File(s)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              2,775 bytes<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              5 Dir(s)&nbsp; 94,106,189,824 bytes free<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_3">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+      <br>
+      <br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="3.3"></a>(3.3)
+
+
+
+
+
+
+
+      Build Docker image<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      1. Build the Docker image called "my-javase-maven-project"<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project&gt;<b>docker&nbsp;
+
+
+
+
+
+
+
+                build&nbsp; .&nbsp; -t&nbsp;
+                "my-javase-maven-project"&nbsp;&nbsp;</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Sending build context to Docker daemon 37.38
+              kB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Step 1/4 : FROM
+              java:8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              8: Pulling from
+              library/java&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Digest:
+              sha256:c1ff613e8ba25833d2e1940da0940c3824f03f802c449f3d1815a66b7f8c0e9d&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Status: Downloaded newer image for
+              java:8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              &nbsp;---&gt;
+              d23bdf5b1b1b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Step 2/4 : COPY
+              target/MyDaysOfTheWeekProject-1.0-SNAPSHOT.jar
+              /usr/share&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              &nbsp;---&gt;
+              7e3bc0e04f1a&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Removing intermediate container
+              37fbd92b7b21&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Step 3/4 : WORKDIR
+              /usr/share&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              &nbsp;---&gt;
+              04762c935f1e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Removing intermediate container
+              0b2b26cec97b&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Step 4/4 : ENTRYPOINT java -cp
+              MyDaysOfTheWeekProject-1.0-SNAPSHOT.jar mypackage.DaysOf<br>
+              TheWeek&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              &nbsp;---&gt; Running in
+              55bb232828e8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              &nbsp;---&gt;
+              86d4891018cd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Removing intermediate container
+              55bb232828e8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Successfully built
+              86d4891018cd&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              SECURITY WARNING: You are building a Docker image from
+              Windows against a non-Windows Do<br>
+              cker host. All files and directories added to build
+              context will have '-rwxr-xr-x' perm<br>
+              issions. It is recommended to double check and reset
+              permissions for sensitive files an<br>
+              d
+              directories.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Verify that the image has been created<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project&gt;<b>docker
+
+
+
+
+
+
+
+                images</b><br>
+              REPOSITORY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              TAG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              IMAGE
+              ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              CREATED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              SIZE<br>
+              <b>my-javase-maven-project&nbsp;&nbsp;&nbsp;&nbsp;
+                latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                7068751369d6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                13 seconds ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81.4 MB</b><b><br>
+              </b>
+              my-java-app&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              387b01bc39e0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 10
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81.4 MB<br>
+              &lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              &lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              1c3b51c4c933&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 15
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81.4 MB<br>
+              &lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              &lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              64c51e6af883&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 18
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 643 MB<br>
+              &lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              &lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              3ecd1259586f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 19
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 643 MB<br>
+              ...<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_3">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+    </div>
+    <p><br>
+    </p>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="3.4"></a>(3.4)
+
+
+
+
+
+
+
+      Run the Docker image<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      1. Run the image and observe the result<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project&gt;<b>docker
+
+
+
+
+
+
+
+                run
+                my-javase-maven-project&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Display days of week using while
+              loop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Sunday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Monday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Tuesday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Wednesday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Thursday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Friday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Saturday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Display days of week using do-while
+              loop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Sunday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Monday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Tuesday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Wednesday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Thursday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Friday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Saturday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Display days of week using for
+              loop&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Sunday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Monday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Tuesday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Wednesday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Thursday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Friday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+              Saturday&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              <br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_3">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+    </div>
+    <p> </p>
+    <p><br>
+    </p>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="3.5"></a>(3.5)
+
+
+
+
+
+
+
+      Prune container and images<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      Sometimes, you want to prune the dangling containers and unused
+      images.&nbsp; <br>
+      <br>
+      1. Prune dangling containers<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project&gt;<b>docker
+
+
+
+
+
+
+
+                container prune</b><br>
+              time="2017-04-03T12:02:44-04:00" level=info msg="Unable to
+              use system certificate pool: crypto/x509: system root pool
+              is not available on Windows"<br>
+              WARNING! This will remove all stopped containers.<br>
+              Are you sure you want to continue? [y/N] <b>y</b><br>
+              Deleted Containers:<br>
+c6cfe59c6e0e6f4b96b9e3c89ace832a27f21fdb94f8200106975f652823d955<br>
+9866958a2532b42a481f08e776e4b41234b08d0742e6652fa63427596af0c342<br>
+48e4098ecc3dcb6f4709da2cf5c0ee04cfe42e952c5dd770e0668dc7d2a3ec62<br>
+5ca6bf8334b4a1198f98de095da0072cb0d3b41cb42e25ff716d1456aef44cf6<br>
+              <br>
+              Total reclaimed space: 0 B<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Prune unused images<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project&gt;<b>docker
+
+
+
+
+                images</b><br>
+              time="2017-04-07T08:15:17-04:00" level=info msg="Unable to
+              use system certificate pool: crypto/x509: system root pool
+              is not available on Windows"<br>
+              REPOSITORY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              TAG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              IMAGE
+              ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              CREATED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              SIZE<br>
+              my-javase-maven-project&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              7068751369d6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81.4 MB<br>
+              my-java-app&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              387b01bc39e0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81.4 MB<br>
+              <b>&lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                &lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                1c3b51c4c933&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                18 minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81.4 MB</b><b><br>
+              </b><b>&lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                &lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                64c51e6af883&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                21 minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 643 MB</b><b><br>
+              </b><b>&lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                &lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                3ecd1259586f&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                22 minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 643 MB</b><b><br>
+              </b><br>
+C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project&gt;<b>docker
+
+
+
+
+
+
+
+                image prune</b><br>
+              time="2017-04-03T12:02:52-04:00" level=info msg="Unable to
+              use system certificate pool: crypto/x509: system root pool
+              is not available on Windows"<br>
+              WARNING! This will remove all dangling images.<br>
+              Are you sure you want to continue? [y/N]<b> y</b><br>
+              Deleted Images:<br>
+              deleted:
+              sha256:11e64919e1ba03882bd2cdf7bb4d419f2df2c6df518d2d95e9b493fb55a60762<br>
+              deleted:
+              sha256:f8366e406c29b02481a3abc3b2eccc17bae1cd85d5b9972ce0aea5465bcb5d64<br>
+              deleted:
+              sha256:c46787e12b58af931b1ccfe1fb8eb7e3719353163d26fa4647e646bd2798ba5a<br>
+              deleted:
+              sha256:d663ce0f6488838cd79bc1450b5f8e1fab9eb5a59060a15f80d55821675ea6e3<br>
+              deleted:
+              sha256:1f4da351dbb708d8916a53c49626325e1cd25e5d2e01fca93797ac5cb1ce6a79<br>
+              deleted:
+              sha256:532b465d59fd6fd22e831b05af0182c9ea9bf23dcdbc4605c53eae5adebb4dc2<br>
+              <br>
+              Total reclaimed space: 675 B<br>
+              <br>
+C:\labs\docker_build_your_own\samples_maven\docker-java-maven-project&gt;<b>docker
+
+
+
+
+                images</b><br>
+              time="2017-04-07T08:15:17-04:00" level=info msg="Unable to
+              use system certificate pool: crypto/x509: system root pool
+              is not available on Windows"<br>
+              REPOSITORY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              TAG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              IMAGE
+              ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              CREATED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              SIZE<br>
+              my-javase-maven-project&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              7068751369d6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81.4 MB<br>
+              my-java-app&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              387b01bc39e0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 13
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81.4 MB<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_3">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+    </div>
+    <p><br>
+    </p>
+    <h2><a name="Exercise_4"></a>Exercise 4: Build and run Spring Boot
+      Java SE application<br>
+    </h2>
+    <br>
+    <div style="margin-left: 40px;">In this exercise, you are going to
+      build and run Spring Boot Java SE application as a Docker-based
+      application.<br>
+      <ol>
+        <li><a href="#4.1">Build and run Spring Boot Maven project<br>
+          </a></li>
+        <li><a href="#4.2">Create Dockerfile<br>
+          </a></li>
+        <li><a href="#4.3">Build Docker image<br>
+          </a></li>
+        <li><a href="#4.4">Run the Docker image</a></li>
+        <li><a href="#4.5">Modify the Dockerfile</a><br>
+        </li>
+        <li><a href="#4.6">Modify the Dockerfile so that "mvn clean
+            package" is done on the container</a><br>
+        </li>
+      </ol>
+      <br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="4.1"></a>(4.1)
+
+
+
+
+
+
+
+      Build and run Spring Boot Maven project<br>
+    </h3>
+    <br>
+    <div style="margin-left: 40px;"> 1. Build the project (build a jar
+      file)<br>
+    </div>
+    <blockquote>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;<b>mvn
+
+
+
+
+
+
+
+                clean package</b><br>
+              [INFO] Scanning for projects...<br>
+              [INFO]<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO] Building di_Profile_Service_Annotation 0.1.0<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO]<br>
+              [INFO] --- maven-clean-plugin:2.5:clean (default-clean) @
+              di_Profile_Service_Annotation ---<br>
+              [INFO] Deleting
+C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation\target<br>
+              [INFO]<br>
+              [INFO] --- maven-resources-plugin:2.6:resources
+              (default-resources) @ di_Profile_Service_Annotation ---<br>
+              [INFO] Using 'UTF-8' encoding to copy filtered resources.<br>
+              [INFO] Copying 1 resource<br>
+              [INFO] Copying 1 resource<br>
+              [INFO]<br>
+              [INFO] --- maven-compiler-plugin:3.1:compile
+              (default-compile) @ di_Profile_Service_Annotation ---<br>
+              [INFO] Changes detected - recompiling the module!<br>
+              [INFO] Compiling 6 source files to
+C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation\target\classes<br>
+              [INFO]<br>
+              [INFO] --- maven-resources-plugin:2.6:testResources
+              (default-testResources) @ di_Profile_Service_Annotation
+              ---<br>
+              [INFO] Using 'UTF-8' encoding to copy filtered resources.<br>
+              [INFO] skip non existing resourceDirectory
+C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation\src\test\resources<br>
+              [INFO]<br>
+              [INFO] --- maven-compiler-plugin:3.1:testCompile
+              (default-testCompile) @ di_Profile_Service_Annotation ---<br>
+              [INFO] Nothing to compile - all classes are up to date<br>
+              [INFO]<br>
+              [INFO] --- maven-surefire-plugin:2.17:test (default-test)
+              @ di_Profile_Service_Annotation ---<br>
+              [INFO] No tests to run.<br>
+              [INFO]<br>
+              [INFO] --- maven-jar-plugin:2.5:jar (default-jar) @
+              di_Profile_Service_Annotation ---<br>
+              [INFO] Building jar:
+C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation\target\di_Profile_Service_Annotation-0.1.0.jar<br>
+              [INFO]<br>
+              [INFO] ---
+              spring-boot-maven-plugin:1.2.4.RELEASE:repackage (default)
+              @ di_Profile_Service_Annotation ---<br>
+              [INFO]<br>
+              ...<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO] BUILD SUCCESS<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO] Total time: 3.717s<br>
+              [INFO] Finished at: Mon Apr 03 12:32:58 EDT 2017<br>
+              [INFO] Final Memory: 19M/230M<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </blockquote>
+    <p style="margin-left: 40px;"></p>
+    <div style="margin-left: 40px;">
+      <ul>
+      </ul>
+      2. Verify that the project jar file has been created<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;<b>dir
+
+
+
+
+
+
+
+                target</b><br>
+              &nbsp;Volume in drive C is OS<br>
+              &nbsp;Volume Serial Number is 0A32-A76F<br>
+              <br>
+              &nbsp;Directory of
+C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation\target<br>
+              <br>
+              04/03/2017&nbsp; 12:32 PM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              .<br>
+              04/03/2017&nbsp; 12:32 PM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              ..<br>
+              04/03/2017&nbsp; 12:35 PM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              classes<br>
+              04/03/2017&nbsp; 12:32
+              PM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              5,479,484 <b>di_Profile_Service_Annotation-0.1.0.jar</b><br>
+              04/03/2017&nbsp; 12:32
+              PM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              7,241 di_Profile_Service_Annotation-0.1.0.jar.original<br>
+              04/03/2017&nbsp; 12:32 PM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              generated-sources<br>
+              04/03/2017&nbsp; 12:32 PM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              maven-archiver<br>
+              04/03/2017&nbsp; 12:32 PM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              maven-status<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              2 File(s)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5,486,725 bytes<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              6 Dir(s)&nbsp; 94,121,197,568 bytes free<br>
+              <br>
+              <br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      3. Run the application.&nbsp; This application just displays "Sang
+      Shin is a good customer." message when it successfully runs.<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;<b>java
+
+
+
+
+
+
+
+                -jar target/di_Profile_Service_Annotation-0.1.0.jar</b><br>
+              <br>
+              &nbsp; .&nbsp;&nbsp;
+              ____&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              __ _ _<br>
+              &nbsp;/\\ / ___'_ __ _ _(_)_ __&nbsp; __ _ \ \ \ \<br>
+              ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \<br>
+              &nbsp;\\/&nbsp; ___)| |_)| | | | | || (_| |&nbsp; ) ) ) )<br>
+              &nbsp; '&nbsp; |____| .__|_| |_|_| |_\__, | / / / /<br>
+              &nbsp;=========|_|==============|___/=/_/_/_/<br>
+              &nbsp;:: Spring Boot
+              ::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              (v1.2.4.RELEASE)<br>
+              <br>
+              2017-04-03 12:34:43.703&nbsp; INFO 2260 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Starting MainApplication v0.1.0 on jpassion2 with PID
+              2260
+              (C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation\target\di_Profile_Service_Annotation-0.1.0.jar
+
+
+
+
+
+
+
+              started by sangs in
+C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation)<br>
+              2017-04-03 12:34:43.765&nbsp; INFO 2260 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] s.c.a.AnnotationConfigApplicationContext :
+              Refreshing
+              org.springframework.context.annotation.AnnotationConfigApplicationContext@f2da948:
+
+
+
+
+
+
+
+              startup date [Mon Apr 03 12:34:43 EDT 2017]; root of
+              context hierarchy<br>
+              2017-04-03 12:34:43.989&nbsp; INFO 2260 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Detected Spring profile: goodcustomer<br>
+              2017-04-03 12:34:43.991&nbsp; INFO 2260 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Detected Spring profile: anotherprofile<br>
+              2017-04-03 12:34:44.007&nbsp; INFO 2260 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Started MainApplication in 0.678 seconds (JVM running
+              for 1.208)<br>
+              <b>Sang Shin is a good customer.</b><br>
+              2017-04-03 12:34:44.011&nbsp; INFO 2260 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Thread-2]
+              s.c.a.AnnotationConfigApplicationContext : Closing
+              org.springframework.context.annotation.AnnotationConfigApplicationContext@f2da948:
+
+
+
+
+
+
+
+              startup date [Mon Apr 03 12:34:43 EDT 2017]; root of
+              context hierarchy</td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      4. You can also run the application using Maven spring-boot plugin<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;<b>mvn
+
+
+
+
+
+
+
+                spring-boot:run</b><br>
+              [INFO] Scanning for projects...<br>
+              [INFO]<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO] Building di_Profile_Service_Annotation 0.1.0<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO]<br>
+              [INFO] &gt;&gt;&gt;
+              spring-boot-maven-plugin:1.2.4.RELEASE:run (default-cli) @
+              di_Profile_Service_Annotation &gt;&gt;&gt;<br>
+              [INFO]<br>
+              [INFO] --- maven-resources-plugin:2.6:resources
+              (default-resources) @ di_Profile_Service_Annotation ---<br>
+              [INFO] Using 'UTF-8' encoding to copy filtered resources.<br>
+              [INFO] Copying 1 resource<br>
+              [INFO] Copying 1 resource<br>
+              [INFO]<br>
+              [INFO] --- maven-compiler-plugin:3.1:compile
+              (default-compile) @ di_Profile_Service_Annotation ---<br>
+              [INFO] Nothing to compile - all classes are up to date<br>
+              [INFO]<br>
+              [INFO] --- maven-resources-plugin:2.6:testResources
+              (default-testResources) @ di_Profile_Service_Annotation
+              ---<br>
+              [INFO] Using 'UTF-8' encoding to copy filtered resources.<br>
+              [INFO] skip non existing resourceDirectory
+C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation\src\test\resources<br>
+              [INFO]<br>
+              [INFO] --- maven-compiler-plugin:3.1:testCompile
+              (default-testCompile) @ di_Profile_Service_Annotation ---<br>
+              [INFO] Nothing to compile - all classes are up to date<br>
+              [INFO]<br>
+              [INFO] &lt;&lt;&lt;
+              spring-boot-maven-plugin:1.2.4.RELEASE:run (default-cli) @
+              di_Profile_Service_Annotation &lt;&lt;&lt;<br>
+              [INFO]<br>
+              [INFO] --- spring-boot-maven-plugin:1.2.4.RELEASE:run
+              (default-cli) @ di_Profile_Service_Annotation ---<br>
+              <br>
+              &nbsp; .&nbsp;&nbsp;
+              ____&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              __ _ _<br>
+              &nbsp;/\\ / ___'_ __ _ _(_)_ __&nbsp; __ _ \ \ \ \<br>
+              ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \<br>
+              &nbsp;\\/&nbsp; ___)| |_)| | | | | || (_| |&nbsp; ) ) ) )<br>
+              &nbsp; '&nbsp; |____| .__|_| |_|_| |_\__, | / / / /<br>
+              &nbsp;=========|_|==============|___/=/_/_/_/<br>
+              &nbsp;:: Spring Boot
+              ::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              (v1.2.4.RELEASE)<br>
+              <br>
+              2017-04-03 12:35:57.085&nbsp; INFO 8876 ---
+              [lication.main()]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Starting MainApplication on jpassion2 with PID 8876
+              (C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation\target\classes
+
+
+
+
+
+
+
+              started by sangs in
+C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation)<br>
+              2017-04-03 12:35:57.141&nbsp; INFO 8876 ---
+              [lication.main()] s.c.a.AnnotationConfigApplicationContext
+              : Refreshing
+              org.springframework.context.annotation.AnnotationConfigApplicationContext@8776d:
+
+
+
+
+
+
+
+              startup date [Mon Apr 03 12:35:57 EDT 2017]; root of
+              context hierarchy<br>
+              2017-04-03 12:35:57.408&nbsp; INFO 8876 ---
+              [lication.main()]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Detected Spring profile: goodcustomer<br>
+              2017-04-03 12:35:57.410&nbsp; INFO 8876 ---
+              [lication.main()]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Detected Spring profile: anotherprofile<br>
+              2017-04-03 12:35:57.430&nbsp; INFO 8876 ---
+              [lication.main()]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Started MainApplication in 0.68 seconds (JVM running for
+              4.2)<br>
+              <b>Sang Shin is a good customer.</b><br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO] BUILD SUCCESS<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO] Total time: 3.274s<br>
+              [INFO] Finished at: Mon Apr 03 12:35:57 EDT 2017<br>
+              [INFO] Final Memory: 15M/230M<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              2017-04-03 12:35:57.578&nbsp; INFO 8876 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Thread-1]
+              s.c.a.AnnotationConfigApplicationContext : Closing
+              org.springframework.context.annotation.AnnotationConfigApplicationContext@8776d:
+
+
+
+
+
+
+
+              startup date [Mon Apr 03 12:35:57 EDT 2017]; root of
+              context hierarchy<br>
+C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_4">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+      <br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="4.2"></a>(4.2)
+
+
+
+
+
+
+
+      Create Dockerfile in the project root directory<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      Now since we verified that the application is working
+      successfully, we are going to take steps to run it as Docker-based
+      application. First, we need to create Dockerfile.<br>
+      <br>
+      1. Create Dockerfile with the following content<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">FROM openjdk:8-jre-alpine<br>
+              COPY target/di_Profile_Service_Annotation-0.1.0.jar
+              /usr/share<br>
+              WORKDIR /usr/share<br>
+              ENTRYPOINT ["java","-jar",
+              "di_Profile_Service_Annotation-0.1.0.jar"] <br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Verify that the Dockerfile has been created<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;dir<br>
+              &nbsp;Volume in drive C is OS<br>
+              &nbsp;Volume Serial Number is 0A32-A76F<br>
+              <br>
+              &nbsp;Directory of
+C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation<br>
+              <br>
+              04/03/2017&nbsp; 12:49 PM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              .<br>
+              04/03/2017&nbsp; 12:49 PM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              ..<br>
+              06/25/2015&nbsp; 09:27
+              PM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              1,226 .classpath<br>
+              07/16/2015&nbsp; 10:09
+              AM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              995 .project<br>
+              04/03/2017&nbsp; 12:26 PM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              .settings<br>
+              07/05/2015&nbsp; 02:24
+              PM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              472 .springBeans<br>
+              04/03/2017&nbsp; 12:49
+              PM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              167 <b>Dockerfile</b><br>
+              07/16/2015&nbsp; 10:09
+              AM&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              1,278 pom.xml<br>
+              04/03/2017&nbsp; 12:26 PM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              src<br>
+              04/03/2017&nbsp; 12:32 PM&nbsp;&nbsp;&nbsp;
+              &lt;DIR&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              target<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              5
+              File(s)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              4,138 bytes<br>
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              5 Dir(s)&nbsp; 94,070,411,264 bytes free<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+    </div>
+    <div style="margin-left: 40px;">&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp; <a href="#Exercise_4">return to top of exercise</a>,
+      <a href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+    </div>
+    <div style="margin-left: 40px;"> <br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="4.3"></a>(4.3)
+
+
+
+
+
+
+
+      Build Docker image<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      1. Build Docker image with a tag<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;<b>docker
+
+
+
+
+
+
+
+                build . -t "my-spring-boot-app"</b><br>
+              Sending build context to Docker daemon 5.551 MB<br>
+              Step 1/4 : FROM openjdk:8-jre-alpine<br>
+              &nbsp;---&gt; c017141bdaa8<br>
+              Step 2/4 : COPY
+              target/di_Profile_Service_Annotation-0.1.0.jar /usr/share<br>
+              &nbsp;---&gt; 240415dfca9a<br>
+              Removing intermediate container 53836e308933<br>
+              Step 3/4 : WORKDIR /usr/share<br>
+              &nbsp;---&gt; aa3115258222<br>
+              Removing intermediate container eeb9d9a91f70<br>
+              Step 4/4 : ENTRYPOINT java -jar
+              di_Profile_Service_Annotation-0.1.0.jar<br>
+              &nbsp;---&gt; Running in 4e89eda6cf31<br>
+              &nbsp;---&gt; 10cb761156da<br>
+              Removing intermediate container 4e89eda6cf31<br>
+              Successfully built 10cb761156da<br>
+              SECURITY WARNING: You are building a Docker image from
+              Windows against a non-Windows Docker host. All files and
+              directories added to build context will have '-rwxr-xr-x'
+              permissions. It is recommended to double check and reset
+              permissions for sensitive files and directories.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Verify image has been created<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;<b>docker
+
+
+
+
+
+
+
+                images</b><br>
+              REPOSITORY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              TAG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              IMAGE
+              ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              CREATED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              SIZE<br>
+              <b>my-spring-boot-app&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                10cb761156da&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                47 seconds ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 86.9 MB</b><br>
+              my-javase-maven-project&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              7068751369d6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 14
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81.4 MB<br>
+              my-java-app&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              387b01bc39e0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 24
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81.4 MB<b><br>
+                ...<br>
+              </b> </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_4">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+      <br>
+      <br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="4.4"></a>(4.4)
+
+
+
+
+
+
+
+      Run the image<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      1. Run the image and verify the outcome<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;<b>docker
+
+
+
+
+
+
+
+                run my-spring-boot-app</b><br>
+              <br>
+              &nbsp; .&nbsp;&nbsp;
+              ____&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              __ _ _<br>
+              &nbsp;/\\ / ___'_ __ _ _(_)_ __&nbsp; __ _ \ \ \ \<br>
+              ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \<br>
+              &nbsp;\\/&nbsp; ___)| |_)| | | | | || (_| |&nbsp; ) ) ) )<br>
+              &nbsp; '&nbsp; |____| .__|_| |_|_| |_\__, | / / / /<br>
+              &nbsp;=========|_|==============|___/=/_/_/_/<br>
+              &nbsp;:: Spring Boot
+              ::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              (v1.2.4.RELEASE)<br>
+              <br>
+              2017-04-03 16:51:04.434&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Starting MainApplication v0.1.0 on f941073fbe2d with PID
+              1 (/usr/share/di_Profile_Service_Annotation-0.1.0.jar
+              started by root in /usr/share)<br>
+              2017-04-03 16:51:04.512&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] s.c.a.AnnotationConfigApplicationContext :
+              Refreshing
+              org.springframework.context.annotation.AnnotationConfigApplicationContext@29a07ed9:
+
+
+
+
+
+
+
+              startup date [Mon Apr 03 16:51:04 UTC 2017]; root of
+              context hierarchy<br>
+              2017-04-03 16:51:04.783&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Detected Spring profile: goodcustomer<br>
+              2017-04-03 16:51:04.784&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Detected Spring profile: anotherprofile<br>
+              2017-04-03 16:51:04.802&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Started MainApplication in 0.87 seconds (JVM running for
+              1.485)<br>
+              <b>Sang Shin is a good customer.</b><br>
+              2017-04-03 16:51:04.807&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Thread-2]
+              s.c.a.AnnotationConfigApplicationContext : Closing
+              org.springframework.context.annotation.AnnotationConfigApplicationContext@29a07ed9:
+
+
+
+
+
+
+
+              startup date [Mon Apr 03 16:51:04 UTC 2017]; root of
+              context hierarchy<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_4">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+    </div>
+    <br>
+    <div style="margin-left: 40px;"><br>
+    </div>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="4.5"></a>(4.5)
+
+
+
+
+      Modify the Dockerfile<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      1. Use CMD instead of ENTRYPOINT<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">FROM openjdk:8-jre-alpine<br>
+              COPY target/di_Profile_Service_Annotation-0.1.0.jar
+              /usr/share<br>
+              WORKDIR /usr/share<br>
+              <b>CMD </b>["java","-jar",
+              "di_Profile_Service_Annotation-0.1.0.jar"] <br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Rebuild the image<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;<b>docker
+
+
+
+
+                build . -t "my-spring-boot-app"</b><br>
+              Sending build context to Docker daemon 5.551 MB<br>
+              Step 1/4 : FROM openjdk:8-jre-alpine<br>
+              &nbsp;---&gt; c017141bdaa8<br>
+              Step 2/4 : COPY
+              target/di_Profile_Service_Annotation-0.1.0.jar /usr/share<br>
+              &nbsp;---&gt; Using cache<br>
+              &nbsp;---&gt; 240415dfca9a<br>
+              Step 3/4 : WORKDIR /usr/share<br>
+              &nbsp;---&gt; Using cache<br>
+              &nbsp;---&gt; aa3115258222<br>
+              <b>Step 4/4 : CMD java -jar
+                di_Profile_Service_Annotation-0.1.0.jar</b><br>
+              &nbsp;---&gt; Running in 39ff4b60a745<br>
+              &nbsp;---&gt; 30bfe97e0230<br>
+              Removing intermediate container 39ff4b60a745<br>
+              Successfully built 30bfe97e0230<br>
+              SECURITY WARNING: You are building a Docker image from
+              Windows against a non-Windows Docker host. All files and
+              directories added to build context will have '-rwxr-xr-x'
+              permissions. It is recommended to double check and reset
+              permissions for sensitive files and directories.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      3. Run the image and verify it still runs successfully<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;<b>docker
+
+
+
+
+                run my-spring-boot-app</b><br>
+              <br>
+              &nbsp; .&nbsp;&nbsp;
+              ____&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              __ _ _<br>
+              &nbsp;/\\ / ___'_ __ _ _(_)_ __&nbsp; __ _ \ \ \ \<br>
+              ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \<br>
+              &nbsp;\\/&nbsp; ___)| |_)| | | | | || (_| |&nbsp; ) ) ) )<br>
+              &nbsp; '&nbsp; |____| .__|_| |_|_| |_\__, | / / / /<br>
+              &nbsp;=========|_|==============|___/=/_/_/_/<br>
+              &nbsp;:: Spring Boot
+              ::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              (v1.2.4.RELEASE)<br>
+              <br>
+              2017-04-07 12:29:29.134&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              : Starting MainApplication v0.1.0 on 4c2368b16875 with PID
+              1 (/usr/share/di_Profile_Service_Annotation-0.1.0.jar
+              started by root in /usr/share)<br>
+              2017-04-07 12:29:29.197&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] s.c.a.AnnotationConfigApplicationContext :
+              Refreshing
+              org.springframework.context.annotation.AnnotationConfigApplicationContext@3ee5b984:
+
+
+
+
+              startup date [Fri Apr 07 12:29:29 GMT 2017]; root of
+              context hierarchy<br>
+              2017-04-07 12:29:29.504&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              : Detected Spring profile: goodcustomer<br>
+              2017-04-07 12:29:29.505&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              : Detected Spring profile: anotherprofile<br>
+              2017-04-07 12:29:29.532&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              : Started MainApplication in 0.899 seconds (JVM running
+              for 1.569)<br>
+              <b>Sang Shin is a good customer.</b><br>
+              2017-04-07 12:29:29.539&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Thread-2]
+              s.c.a.AnnotationConfigApplicationContext : Closing
+              org.springframework.context.annotation.AnnotationConfigApplicationContext@3ee5b984:
+
+
+
+
+              startup date [Fri Apr 07 12:29:29 GMT 2017]; root of
+              context hierarchy<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_4">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+      <br>
+      <br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="4.6"></a>(4.6)
+
+
+
+
+      Modify the Dockerfile so that "mvn clean packate" gets done on the
+      container<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      In this step, we are going to change the Dockerfile so that we are
+      going to perform "mvn clean package" is done at the
+      container.&nbsp; (This is just to demonstrate that there are
+      multiple ways to build your Docker-based application.)<br>
+      <br>
+      1. Search for image that has both JDK and Maven<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\1passion.labs\handson_docker\docker_build_your_own\samples_maven\docker-java-maven-project&gt;<b>docker
+
+
+
+
+                search mvn</b><br>
+              time="2017-04-07T10:49:09-04:00" level=info msg="Unable to
+              use system certificate pool: crypto/x509: system root pool
+              is not available on Windows"<br>
+              NAME&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              DESCRIPTION&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              STARS&nbsp;&nbsp;&nbsp;&nbsp; OFFICIAL&nbsp;&nbsp;
+              AUTOMATED<br>
+              rowanto/docker-java8-mvn-nodejs-npm&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              A docker image which has latest mvn, java8...&nbsp;&nbsp;
+              3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              <b>jimschubert/8-jdk-alpine-mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                Java 8 on Alpine with Maven
+                3.3.9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+                [OK]</b><br>
+              rodrigomiguele/mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Maven built in Alpine base
+              image.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              dockette/mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              My MVN 3 based on Oracle Java
+              Dockerfile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              jkremser/jdk-mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Fedora + java8 + maven base
+              image&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              walkingdevs/mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Minimal Maven Docker
+              Image&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              wavesoftware/docker-javascript-in-mvn&nbsp;&nbsp; Docker
+              container for building Javascript a...&nbsp;&nbsp;
+              1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              jiglesgom/mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              java8 + git +
+              mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              rodrigosaito/mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              lits/java-mvn-firefox&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Java-mvn-firefox
+              container&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              gstlt/docker-jdk-mvn-fabric&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Used for testing (mvn test) and deploying ...&nbsp;&nbsp;
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              thomasf/drone-mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Flexible artifact publishing to Maven repo...&nbsp;&nbsp;
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              dbieri/docker-mvn-escore&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              comptel/mvn-alpine&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Alpine based image for internal projects t...&nbsp;&nbsp;
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              committed/docker-mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Docker image with maven repository built
+              in&nbsp;&nbsp;&nbsp;&nbsp;
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              rickcrook/docker-git-mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              image with docker, git, java and mvn rolle...&nbsp;&nbsp;
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              vdemeester/protractor-mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Protractor with
+              maven&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              repworth/mvn-cli&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Docker container with mvn-cli
+              tools&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              dockette/openjdk-mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              My MVN 3 based on OpenJDK
+              Dockerfile&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              openkbs/jre-mvn-py3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Java 8 (1.8.0_121) JRE server + Maven 3.3....&nbsp;&nbsp;
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              wavesoftware/trusty-mvn&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Standard Maven (3.0.4) on Ubuntu 14.04 wit...&nbsp;&nbsp;
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              openkbs/jre-mvn-py&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Java 8 (1.8.0_121) JRE server + Maven 3.3....&nbsp;&nbsp;
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              ksimple/java8-mvn-nodejs-npm-python3&nbsp;&nbsp;&nbsp;
+              java8-mvn-nodejs-npm-python3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              maketechnology/mvn-cache&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              Build Image with a mvn cache
+              filled&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+              wayin/mvn-node-ci&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              A massive conflagration used for a CI
+              build.&nbsp;&nbsp;&nbsp;
+              0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              [OK]<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Run "mvn -version" command with the
+      "jimschubert/8-jdk-alpine-mvn" image<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\1passion.labs\handson_docker\docker_build_your_own\samples_maven\docker-java-maven-project&gt;<b>docker
+
+
+
+
+                run jimschubert/8-jdk-alpine-mvn mvn -version</b><br>
+              time="2017-04-07T10:47:22-04:00" level=info msg="Unable to
+              use system certificate pool: crypto/x509: system root pool
+              is not available on Windows"<br>
+              Apache Maven 3.3.9
+              (bb52d8502b132ec0a5a3f4c09453c07478323dc5;
+              2015-11-10T16:41:47+00:00)<br>
+              Maven home: /usr/share/maven<br>
+              Java version: 1.8.0_111-internal, vendor: Oracle
+              Corporation<br>
+              Java home: /usr/lib/jvm/java-1.8-openjdk/jre<br>
+              Default locale: en_US, platform encoding: UTF-8<br>
+              OS name: "linux", version: "4.4.57-boot2docker", arch:
+              "amd64", family: "unix"<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      3. Modify the Dockerfile.&nbsp; Not that we are now performing
+      "mvn clean package" in the container.&nbsp; <br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">FROM<b> jimschubert/8-jdk-alpine-mvn</b><br>
+              COPY . /usr/share<br>
+              WORKDIR /usr/share<br>
+              <b>RUN mvn clean package</b><br>
+              CMD ["java","-jar",
+              "target/di_Profile_Service_Annotation-0.1.0.jar"] <br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      4. Rebuild the image<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;<b>docker
+
+
+
+
+                build . -t "my-spring-boot-app"<br>
+                ...<br>
+              </b></td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      5. Run the image and verify that the application runs successfully
+      as shown below.<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\1passion.labs\handson_docker\docker_build_your_own\samples_maven\di_Profile_Service_Annotation&gt;<b>docker
+
+
+
+
+                run my-spring-boot-app</b><br>
+              time="2017-04-07T10:58:15-04:00" level=info msg="Unable to
+              use system certificate pool: crypto/x509: system root pool
+              is not available on Windows"<br>
+              <br>
+              &nbsp; .&nbsp;&nbsp;
+              ____&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              __ _ _<br>
+              &nbsp;/\\ / ___'_ __ _ _(_)_ __&nbsp; __ _ \ \ \ \<br>
+              ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \<br>
+              &nbsp;\\/&nbsp; ___)| |_)| | | | | || (_| |&nbsp; ) ) ) )<br>
+              &nbsp; '&nbsp; |____| .__|_| |_|_| |_\__, | / / / /<br>
+              &nbsp;=========|_|==============|___/=/_/_/_/<br>
+              &nbsp;:: Spring Boot
+              ::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              (v1.2.4.RELEASE)<br>
+              <br>
+              2017-04-07 14:42:57.851&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              : Starting MainApplication v0.1.0 on 87a38370b299 with PID
+              1
+              (/usr/share/target/di_Profile_Service_Annotation-0.1.0.jar
+              started by root in /usr/share)<br>
+              2017-04-07 14:42:57.939&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] s.c.a.AnnotationConfigApplicationContext :
+              Refreshing
+              org.springframework.context.annotation.AnnotationConfigApplicationContext@2ada9b37:
+
+
+
+
+              startup date [Fri Apr 07 14:42:57 GMT 2017]; root of
+              context hierarchy<br>
+              2017-04-07 14:42:58.288&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              : Detected Spring profile: goodcustomer<br>
+              2017-04-07 14:42:58.297&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              : Detected Spring profile: anotherprofile<br>
+              2017-04-07 14:42:58.327&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.di.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              : Started MainApplication in 1.091 seconds (JVM running
+              for 1.86)<br>
+              <b>Sang Shin is a good customer.</b><br>
+              2017-04-07 14:42:58.329&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Thread-2]
+              s.c.a.AnnotationConfigApplicationContext : Closing
+              org.springframework.context.annotation.AnnotationConfigApplicationContext@2ada9b37:
+
+
+
+
+              startup date [Fri Apr 07 14:42:57 GMT 2017]; root of
+              context hierarchy<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_4">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+      <br>
+    </div>
+    <p><br>
+    </p>
+    <h2><a name="Exercise_5"></a>Exercise 5: Build and run Spring Boot
+      MVC application<br>
+    </h2>
+    <br>
+    <div style="margin-left: 40px;">In this exercise, you are going to
+      build a Docker image that contains Spring Boot based MVC
+      application.&nbsp; Since this is a Web application, we will have
+      to do port binding.<br>
+      <ol>
+        <li><a href="#5.1">Build the application<br>
+          </a></li>
+        <li><a href="#5.2">Create Dockerfile</a><br>
+        </li>
+        <li><a href="#5.3">Build Docker image</a><br>
+        </li>
+        <li><a href="#5.4">Run the Docker image with port binding</a><br>
+        </li>
+        <li><a href="#5.5">Access the Web application</a></li>
+        <li><a href="#5.6">Run the Docker image with random port binding</a><br>
+        </li>
+      </ol>
+      <br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="5.1"></a>(5.1)
+
+
+
+
+
+
+
+      Build the application <br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      Here we just want to make sure this application works.&nbsp; So we
+      will try to build and run without using Docker.<br>
+      <br>
+      1. Build the application either at the command line as shown below
+      or using an IDE of your choice<br>
+    </div>
+    <blockquote>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\mvc_form_simple&gt;<b>mvn
+
+
+
+
+
+
+
+                clean package</b><br>
+              [INFO] Scanning for projects...<br>
+              [INFO]<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO] Building mvc_form_simple 0.0.1-SNAPSHOT<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO]<br>
+              [INFO] --- maven-clean-plugin:2.5:clean (default-clean) @
+              mvc_form_simple ---<br>
+              [INFO] Deleting
+              C:\labs\docker_build_your_own\samples_maven\mvc_form_simple\target<br>
+              [INFO]<br>
+              [INFO] --- maven-resources-plugin:2.6:resources
+              (default-resources) @ mvc_form_simple ---<br>
+              [INFO] Using 'UTF-8' encoding to copy filtered resources.<br>
+              [INFO] Copying 1 resource<br>
+              [INFO] Copying 0 resource<br>
+              [INFO]<br>
+              [INFO] --- maven-compiler-plugin:3.1:compile
+              (default-compile) @ mvc_form_simple ---<br>
+              [INFO] Changes detected - recompiling the module!<br>
+              ...<br>
+              <br>
+              [INFO]<br>
+              [INFO] --- maven-war-plugin:2.5:war (default-war) @
+              mvc_form_simple ---<br>
+              [INFO] Packaging webapp<br>
+              [INFO] Assembling webapp [mvc_form_simple] in
+[C:\labs\docker_build_your_own\samples_maven\mvc_form_simple\target\mvc_form_simple-0.0.1-SNAPSHOT]<br>
+              [INFO] Processing war project<br>
+              [INFO] Copying webapp resources
+[C:\labs\docker_build_your_own\samples_maven\mvc_form_simple\src\main\webapp]<br>
+              [INFO] Webapp assembled in [1112 msecs]<br>
+              [INFO] Building war:
+C:\labs\docker_build_your_own\samples_maven\mvc_form_simple\target\mvc_form_simple-0.0.1-SNAPSHOT.war<br>
+              [INFO]<br>
+              [INFO] ---
+              spring-boot-maven-plugin:1.2.4.RELEASE:repackage (default)
+              @ mvc_form_simple ---<br>
+              [INFO]<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO] BUILD SUCCESS<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+              [INFO] Total time: 12.325s<br>
+              [INFO] Finished at: Mon Apr 03 13:03:39 EDT 2017<br>
+              [INFO] Final Memory: 23M/172M<br>
+              [INFO]
+              ------------------------------------------------------------------------<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Run the application.<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\mvc_form_simple&gt;<b>java
+
+
+
+
+
+
+
+                -jar target/mvc_form_simple-0.0.1-SNAPSHOT.war</b><br>
+              <br>
+              &nbsp; .&nbsp;&nbsp;
+              ____&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              __ _ _<br>
+              &nbsp;/\\ / ___'_ __ _ _(_)_ __&nbsp; __ _ \ \ \ \<br>
+              ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \<br>
+              &nbsp;\\/&nbsp; ___)| |_)| | | | | || (_| |&nbsp; ) ) ) )<br>
+              &nbsp; '&nbsp; |____| .__|_| |_|_| |_\__, | / / / /<br>
+              &nbsp;=========|_|==============|___/=/_/_/_/<br>
+              &nbsp;:: Spring Boot
+              ::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              (v1.2.4.RELEASE)<br>
+              <br>
+              2017-04-03 13:57:33.796&nbsp; INFO 9660 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.mvc.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Starting MainApplication on jpassion2 with PID 9660
+              (started by sangs in
+              C:\labs\docker_build_your_own\samples_maven\mvc_form_simple)<br>
+              2017-04-03 13:57:33.873&nbsp; INFO 9660 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] ationConfigEmbeddedWebApplicationContext :
+              Refreshing
+              org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@69842f5a:
+
+
+
+
+
+
+
+              startup date [Mon Apr 03 13:57:33 EDT 2017]; root of
+              context hierarchy<br>
+              ...<br>
+              <br>
+              2017-04-03 13:57:40.622&nbsp; INFO 9660 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              o.s.b.a.e.mvc.EndpointHandlerMapping&nbsp;&nbsp;&nbsp;&nbsp;
+              : Mapped
+              "{[/configprops],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}"
+
+
+
+
+
+
+
+              onto public java.lang.Object
+org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()<br>
+              2017-04-03 13:57:40.637&nbsp; INFO 9660 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              o.s.j.e.a.AnnotationMBeanExporter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Registering beans for JMX exposure on startup<br>
+              2017-04-03 13:57:40.651&nbsp; INFO 9660 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] o.s.c.support.DefaultLifecycleProcessor&nbsp; :
+              Starting beans in phase 0<br>
+              2017-04-03 13:57:40.867&nbsp; INFO 9660 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] s.b.c.e.t.TomcatEmbeddedServletContainer : Tomcat
+              started on port(s): 8080 (http)<br>
+              2017-04-03 13:57:40.870&nbsp; INFO 9660 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.mvc.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Started MainApplication in 7.46 seconds (JVM running for
+              8.105)<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      3. Access the application using your browser <a
+        href="http://localhost:8080">http://localhost:8080</a><br>
+      <br>
+      <img src="index_files/build_01.png" alt="" width="587"
+        height="643"><br>
+      <br>
+      4. Since we verified that this application works, we will stop the
+      application (CTRL+C) and ready to create docker image out of it.<br>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_5">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+    </blockquote>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="5.2"></a>(5.2)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      Create Dockerfile<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      1. Ceate Dockerfile in the project root directory. <br>
+    </div>
+    <blockquote>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">FROM openjdk:8-jre-alpine<br>
+              COPY target/mvc_form_simple-0.0.1-SNAPSHOT.war /usr/share<br>
+              WORKDIR /usr/share<br>
+              <b>EXPOSE 8080 8081</b><br>
+              CMD ["/usr/bin/java", "-jar",
+              "-Dspring.profiles.active=whatever",
+              "mvc_form_simple-0.0.1-SNAPSHOT.war"]<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_5">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a></blockquote>
+    <br>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="5.3"></a>(5.3)
+
+
+
+
+
+
+
+      Build Docker image<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      1. Build image.&nbsp; Note that we are giving a name to the format
+      of "&lt;user-id&gt;/&lt;name-of-image&gt;".&nbsp; The
+      &lt;user-id&gt; should be the same Docker Hub user id if you want
+      to push your image to the Docker Hub later on.&nbsp; For now you
+      can just choose any &lt;user-id&gt; name of your choice.<br>
+    </div>
+    <blockquote>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\mvc_form_simple&gt;<b>docker
+
+
+
+
+
+
+
+                build . --rm -t "sangshin/my-spring-boot-web-app"</b><br>
+              Sending build context to Docker daemon 35.14 MB<br>
+              Step 1/5 : FROM openjdk:8-jre-alpine<br>
+              &nbsp;---&gt; c017141bdaa8<br>
+              Step 2/5 : COPY target/mvc_form_simple-0.0.1-SNAPSHOT.war
+              /usr/share<br>
+              &nbsp;---&gt; 18eda40ad545<br>
+              Removing intermediate container 19e662f7ea50<br>
+              Step 3/5 : WORKDIR /usr/share<br>
+              &nbsp;---&gt; b799ae0bdca0<br>
+              Removing intermediate container 4a1419889952<br>
+              Step 4/5 : EXPOSE 8080 8081<br>
+              &nbsp;---&gt; Running in 30a9d8a6b0fd<br>
+              &nbsp;---&gt; f24a4ca2a88b<br>
+              Removing intermediate container 30a9d8a6b0fd<br>
+              Step 5/5 : CMD /usr/bin/java -jar
+              -Dspring.profiles.active=whatever
+              mvc_form_simple-0.0.1-SNAPSHOT.war<br>
+              &nbsp;---&gt; Running in 2f9f8fc69b1d<br>
+              &nbsp;---&gt; b315b7e8647e<br>
+              Removing intermediate container 2f9f8fc69b1d<br>
+              Successfully built b315b7e8647e<br>
+              SECURITY WARNING: You are building a Docker image from
+              Windows against a non-Windows Docker host. All files and
+              directories added to build context will have '-rwxr-xr-x'
+              permissions. It is recommended to double check and reset
+              permissions for sensitive files and directories.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Verify that the image has been created<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\mvc_form_simple&gt;<b>docker
+
+
+
+
+
+
+
+                images</b><br>
+              REPOSITORY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              TAG&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              IMAGE
+              ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              CREATED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              SIZE<br>
+              <b> sangshin/my-spring-boot-web-app&nbsp;&nbsp;
+                latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+                b315b7e8647e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                23 seconds ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 97.6 MB</b><br>
+              my-spring-boot-app&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              30bfe97e0230&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 11
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 86.9 MB<br>
+              &lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              &lt;none&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              10cb761156da&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 14
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 86.9 MB<br>
+              my-javase-maven-project&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              7068751369d6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 27
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81.4 MB<br>
+              my-java-app&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              387b01bc39e0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 38
+              minutes ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 81.4 MB<br>
+              nginx&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              5e69fe4b3c31&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6
+              days
+              ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              183 MB<br>
+              tomcat&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              2da861e12a55&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12
+              days ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              357 MB<br>
+              mysql&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              5faba1a71ec4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 12
+              days ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              407 MB<br>
+              busybox&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              latest&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              00f017a8c2a6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3
+              weeks ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              1.11 MB<br>
+              openjdk&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              8-jre-alpine&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              c017141bdaa8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3
+              weeks ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              81.4 MB<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      3. Check the history of the image<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\mvc_form_simple&gt;<b>docker
+
+
+
+
+
+
+
+                history sangshin/my-spring-boot-web-app</b><br>
+              IMAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              CREATED&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              CREATED
+              BY&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              SIZE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              COMMENT<br>
+              4cad394bdd89&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              About a minute ago&nbsp;&nbsp; /bin/sh -c #(nop)&nbsp; <b>CMD
+
+
+
+
+
+                ["/usr/bin/java" "-</b>...&nbsp;&nbsp; 0 B<br>
+              d0714df9f682&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              About a minute ago&nbsp;&nbsp; /bin/sh -c #(nop) <b>WORKDIR
+
+
+
+
+
+                /usr/share&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              0 B<br>
+              87c4a36e9b15&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              About a minute ago&nbsp;&nbsp; /bin/sh -c #(nop) <b>COPY
+                file:3ab1406d574aa8...&nbsp;&nbsp;</b> 16.2 MB<br>
+              c017141bdaa8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3
+              weeks
+              ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              /bin/sh -c set -x&nbsp; &amp;&amp; apk add
+              --no-cache&nbsp; ...&nbsp;&nbsp; 77.4 MB<br>
+              &lt;missing&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              3 weeks
+              ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              /bin/sh -c #(nop)&nbsp; ENV
+              JAVA_ALPINE_VERSION...&nbsp;&nbsp; 0 B<br>
+              &lt;missing&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              3 weeks
+              ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              /bin/sh -c #(nop)&nbsp; ENV
+              JAVA_VERSION=8u121&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0 B<br>
+              &lt;missing&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              3 weeks
+              ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              /bin/sh -c #(nop)&nbsp; ENV
+              PATH=/usr/local/sbi...&nbsp;&nbsp; 0 B<br>
+              &lt;missing&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              3 weeks
+              ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              /bin/sh -c #(nop)&nbsp; ENV
+              JAVA_HOME=/usr/lib/...&nbsp;&nbsp; 0 B<br>
+              &lt;missing&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              3 weeks
+              ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              /bin/sh -c {&nbsp;&nbsp; echo '#!/bin/sh';&nbsp;&nbsp;
+              echo 's...&nbsp;&nbsp; 87 B<br>
+              &lt;missing&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              3 weeks
+              ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              /bin/sh -c #(nop)&nbsp; ENV
+              LANG=C.UTF-8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              0 B<br>
+              &lt;missing&gt;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              4 weeks
+              ago&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              /bin/sh -c #(nop) ADD file:730030a984f5f0c...&nbsp;&nbsp;
+              3.99 MB<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_5">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a></blockquote>
+    <br>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="5.4"></a>(5.4)
+
+
+
+
+
+
+
+      Run the image with port binding with "-p" option<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      1. Run the image with port binding with host port 8090 to
+      container port of 8080 and host port 8091 to container port of
+      8081.&nbsp; Verify that Tomcat and the application started
+      successfully.<br>
+    </div>
+    <blockquote>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\mvc_form_simple&gt;<b>docker
+
+
+
+
+
+
+
+                run --name mvc_form_simple -p 8090:8080 -p 8091:8081
+                sangshin/my-spring-boot-web-app</b><br>
+              <br>
+              &nbsp; .&nbsp;&nbsp;
+              ____&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              __ _ _<br>
+              &nbsp;/\\ / ___'_ __ _ _(_)_ __&nbsp; __ _ \ \ \ \<br>
+              ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \<br>
+              &nbsp;\\/&nbsp; ___)| |_)| | | | | || (_| |&nbsp; ) ) ) )<br>
+              &nbsp; '&nbsp; |____| .__|_| |_|_| |_\__, | / / / /<br>
+              &nbsp;=========|_|==============|___/=/_/_/_/<br>
+              &nbsp;:: Spring Boot
+              ::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              (v1.2.4.RELEASE)<br>
+              <br>
+              2017-04-03 18:11:22.346&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.mvc.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Starting MainApplication on 304eb11ff354 with PID 1
+              (started by root in /usr/share)<br>
+              2017-04-03 18:11:22.434&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] ationConfigEmbeddedWebApplicationContext :
+              Refreshing
+              org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@4cb14f98:
+
+
+
+
+
+
+
+              startup date [Mon Apr 03 18:11:22 GMT 2017]; root of
+              context hierarchy<br>
+              2017-04-03 18:11:22.897&nbsp; WARN 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] .i.s.PathMatchingResourcePatternResolver : Skipping
+              [/usr/share/mvc_form_simple-0.0.1-SNAPSHOT.war] because it
+              does not denote a directory<br>
+              ...<br>
+              <br>
+              2017-04-03 18:11:30.772&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] o.s.w.s.handler.SimpleUrlHandlerMapping&nbsp; :
+              Mapped URL path [/**/favicon.ico] onto handler of type
+              [class ...<br>
+              2017-04-03 18:11:31.417&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              o.s.b.a.e.mvc.EndpointHandlerMapping&nbsp;&nbsp;&nbsp;&nbsp;
+              : Mapped
+              "{[/env],methods=[GET],params=[],headers=[],consumes=[],produces=[],custom=[]}"
+
+
+
+
+
+
+
+              onto public java.lang.Object
+org.springframework.boot.actuate.endpoint.mvc.EndpointMvcAdapter.invoke()<br>
+              2017-04-03 18:11:31.442&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              o.s.j.e.a.AnnotationMBeanExporter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              : Registering beans for JMX exposure on startup<br>
+              2017-04-03 18:11:31.460&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] o.s.c.support.DefaultLifecycleProcessor&nbsp; :
+              Starting beans in phase 0<br>
+              2017-04-03 18:11:31.730&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] s.b.c.e.t.TomcatEmbeddedServletContainer : <b>Tomcat
+
+
+
+
+
+                started on port(s): 8080 (http)</b><br>
+              2017-04-03 18:11:31.733&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.mvc.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+              :<b> Started MainApplication in 10.002 seconds (JVM
+                running for 10.781)</b><br>
+              <br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_5">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a></blockquote>
+    <div style="margin-left: 40px;"> <br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="5.5"></a>(5.5)
+
+
+
+
+
+
+
+      Access the application<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      1. Find out the IP address of the Docker host<br>
+    </div>
+    <blockquote>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\mvc_form_simple&gt;<b>docker-machine
+
+
+
+
+
+
+
+                ip</b><br>
+              192.168.99.100<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Access the application using <a
+        href="http://192.168.99.100:8090">http://192.168.99.100:8090</a><br>
+      <br>
+      <img src="index_files/build_02.png" alt="" width="664"
+        height="600"><br>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_5">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a></blockquote>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="5.6"></a>(5.6)
+
+
+
+
+
+
+
+      Run the image with random port binding<br>
+    </h3>
+    <div style="margin-left: 40px;"> <br>
+      1. Open another terminal window since the original terminal window
+      is running the application.&nbsp; Set environment variables.<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\Users\sangs&gt;<b>docker-machine env</b><br>
+              SET DOCKER_TLS_VERIFY=1<br>
+              SET DOCKER_HOST=tcp://192.168.99.100:2376<br>
+              SET
+              DOCKER_CERT_PATH=C:\Users\sangs\.docker\machine\machines\default<br>
+              SET DOCKER_MACHINE_NAME=default<br>
+              SET COMPOSE_CONVERT_WINDOWS_PATHS=true<br>
+              REM Run this command to configure your shell:<br>
+              REM&nbsp;&nbsp;&nbsp;&nbsp; @FOR /f "tokens=*" %i IN
+              ('docker-machine env') DO @%i<br>
+              <br>
+              C:\Users\sangs&gt;<b>@FOR /f "tokens=*" %i IN
+                ('docker-machine env') DO @%i</b><br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      2. Run the same application and observe an name conflict
+      error.&nbsp; This is an expected behavior because there is already
+      an image with the same name.<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\mvc_form_simple&gt;<b>docker
+
+
+
+
+                run --name mvc_form_simple -P
+                sangshin/my-spring-boot-web-app</b><br>
+              time="2017-04-07T10:32:37-04:00" level=info msg="Unable to
+              use system certificate pool: crypto/x509: system root pool
+              is not available on Windows"<br>
+              docker: Error response from daemon: Conflict. The
+              container name "/mvc_form_simple" is already in use by
+              container
+              c2cabcfe727c8a152dfce0dbc5faf16c94fea54b76d8712059abaaaecc578627.
+              You have to remove (or rename) that container to be able
+              to reuse that name..<br>
+              See 'docker run --help'.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      3. Give it a different name<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\mvc_form_simple&gt;<b>docker
+
+
+
+
+                run <font color="#ff0000">--name mvc_form_simple2</font>
+                -P sangshin/my-spring-boot-web-app</b><br>
+              time="2017-04-07T10:33:30-04:00" level=info msg="Unable to
+              use system certificate pool: crypto/x509: system root pool
+              is not available on Windows"<br>
+              <br>
+              &nbsp; .&nbsp;&nbsp;
+              ____&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              _&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              __ _ _<br>
+              &nbsp;/\\ / ___'_ __ _ _(_)_ __&nbsp; __ _ \ \ \ \<br>
+              ( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \<br>
+              &nbsp;\\/&nbsp; ___)| |_)| | | | | || (_| |&nbsp; ) ) ) )<br>
+              &nbsp; '&nbsp; |____| .__|_| |_|_| |_\__, | / / / /<br>
+              &nbsp;=========|_|==============|___/=/_/_/_/<br>
+              &nbsp;:: Spring Boot
+              ::&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              (v1.2.4.RELEASE)<br>
+              <br>
+              2017-04-07 14:18:12.129&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main]
+              com.jpassion.mvc.MainApplication&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+              : Starting MainApplication on c7a0ee465d5c with PID 1
+              (started by root in /usr/share)<br>
+              2017-04-07 14:18:12.240&nbsp; INFO 1 ---
+              [&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              main] ationConfigEmbeddedWebApplicationContext :
+              Refreshing
+              org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext@4cb14f98:
+
+
+
+
+              startup date [Fri Apr 07 14:18:12 GMT 2017]; root of
+              context hierarchy<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      4. Open another terminal and verify the presence of two containers
+      using the same image<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\Users\sangs&gt;docker ps<br>
+              CONTAINER ID&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              IMAGE&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+              &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; ... &nbsp;&nbsp;
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              PORTS&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+              NAMES<br>
+              c7a0ee465d5c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>sangshin/my-spring-boot-web-app</b>&nbsp;
+
+              ... &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>0.0.0.0:32769-&gt;8080/tcp</b>,
+              0.0.0.0:32768-&gt;8081/tcp&nbsp;&nbsp; mvc_form_simple2<br>
+              c2cabcfe727c&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>sangshin/my-spring-boot-web-app</b>&nbsp;
+
+              ... &nbsp; &nbsp; &nbsp;&nbsp; 0.0.0.0:8090-&gt;8080/tcp,
+              0.0.0.0:8091-&gt;8081/tcp&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+              mvc_form_simple<br>
+              ...<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      5. Access the application using IP address of the "default" docker
+      machine<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\Users\sangs&gt;<b>docker-machine ip</b><br>
+              192.168.99.100<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      6. Access the application with randomly assigned port number,
+      32769 in the example below<br>
+      <br>
+      <img src="index_files/build_03.png" alt="" width="697"
+        height="520"><br>
+      <br>
+      <br>
+      <br>
+      <br>
+    </div>
+    <h2><a name="Exercise_6"></a>Exercise 6: Pushing your image to
+      DockerHub<br>
+    </h2>
+    <blockquote>In this exercise, you are going to push your image to
+      DockerHub.&nbsp; The name of the image should be in the form of
+      &lt;Your-Docker-Hub-Account&gt;/&lt;image-name&gt;.<br>
+      <ol>
+        <li><a href="#6.1">Create Docker Hub account (if you don't have
+            one yet)</a></li>
+        <li><a href="#6.2">Create an image with Docker Hub account</a><br>
+        </li>
+        <li><a href="#6.3">Login to Docker Hub<br>
+          </a></li>
+        <li><a href="#6.4">Push the image</a></li>
+      </ol>
+    </blockquote>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="6.1"></a>(6.1)
+
+
+
+
+
+      Create Docker Hub account (if you don't have one yet<br>
+    </h3>
+    <blockquote>Go to <a href="https://hub.docker.com">https://hub.docker.com<br>
+      </a></blockquote>
+    <br>
+    <h3 style="margin-left: 40px;" class="tutorial">(<a name="6.2"></a>6.2)
+
+
+
+
+
+      Create an image with the Docker Hub account <br>
+    </h3>
+    <blockquote>Make sure you have an image with
+      &lt;Your-Docker-Hub-Account&gt;/&lt;image-name&gt;.<br>
+      <br>
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\mvc_form_simple&gt;<b>docker
+
+
+
+
+
+                build . --rm -t "axykim00/my-spring-boot-web-app"</b><br>
+              Sending build context to Docker daemon 35.14 MB<br>
+              Step 1/5 : FROM openjdk:8-jre-alpine<br>
+              &nbsp;---&gt; c017141bdaa8<br>
+              Step 2/5 : COPY target/mvc_form_simple-0.0.1-SNAPSHOT.war
+              /usr/share<br>
+              &nbsp;---&gt; Using cache<br>
+              &nbsp;---&gt; cf1c1b70b007<br>
+              Step 3/5 : WORKDIR /usr/share<br>
+              &nbsp;---&gt; Using cache<br>
+              &nbsp;---&gt; 761f787b3377<br>
+              Step 4/5 : EXPOSE 8080 8081<br>
+              &nbsp;---&gt; Using cache<br>
+              &nbsp;---&gt; 8140a650ee23<br>
+              Step 5/5 : CMD /usr/bin/java -jar
+              -Dspring.profiles.active=whatever
+              mvc_form_simple-0.0.1-SNAPSHOT.war&nbsp; ---&gt; Using
+              cache<br>
+              &nbsp;---&gt; 186db55ab0b8<br>
+              Successfully built 186db55ab0b8<br>
+              SECURITY WARNING: You are building a Docker image from
+              Windows against a non-Windows Docker host. All files and
+              directories added to build context will have '-rwxr-xr-x'
+              permissions. It is recommended to double check and reset
+              permissions for sensitive files and directories.<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_6">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+    </blockquote>
+    <br>
+    <br>
+    <div style="margin-left: 40px;"><br>
+    </div>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="6.3"></a>(6.3)
+
+
+
+
+
+
+
+      Login to Docker Hub</h3>
+    <blockquote>1. Log in<br>
+    </blockquote>
+    <div style="margin-left: 40px;">
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\&gt;docker login<br>
+              Login with your Docker ID to push and pull images from
+              Docker Hub. If you don't have a Docker ID, head over to
+              https://hub.docker.com to create one.<br>
+              Username (axykim00):<br>
+              Password:<br>
+              Login Succeeded<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_6">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+    </div>
+    <div style="margin-left: 40px;"> <br>
+    </div>
+    <p><br>
+    </p>
+    <h3 style="margin-left: 40px;" class="tutorial"><a name="6.4"></a>(6.4)
+
+
+
+
+
+      Push the image<br>
+    </h3>
+    <br>
+    <div style="margin-left: 40px;">
+      <table width="100%" cellspacing="2" cellpadding="2" border="1">
+        <tbody>
+          <tr>
+            <td valign="top">C:\labs\docker_build_your_own\samples_maven\mvc_form_simple&gt;<b>docker
+
+
+
+
+
+                push axykim00/my-spring-boot-web-app</b><br>
+              The push refers to a repository
+              [docker.io/axykim00/my-spring-boot-web-app]<br>
+              10e9bd193bb3: Pushed<br>
+              eb90119d873a: Pushed<br>
+              27f36920af49: Pushed<br>
+              23b9c7b43573: Pushed<br>
+              latest: digest:
+              sha256:57d75bd8843b679edc1a12dc1f9988c68358f65db926aaa6abe052a25f5ac52f
+              size: 1159<br>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <br>
+      &nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;&nbsp; <a
+        href="#Exercise_6">return to top of exercise</a>, <a
+        href="#Tutorial_Exercises">return to top</a><br>
+    </div>
+    <p><br>
+    </p>
+    <h2><a name="Homework"></a>Homework exercise</h2>
+    <blockquote>
+      <p>1. Perform the following tasks<br>
+      </p>
+    </blockquote>
+    <div style="margin-left: 40px;">
+      <ul>
+        <li>Choose any Web application of your choice and make sure it
+          is running - "mvc_form_formtags" sample application is
+          provided under "samples_maven" directory if you want to use it<br>
+        </li>
+        <li>Create a Docker image and run it</li>
+        <li>Push it to the Docker Hub</li>
+      </ul>
+      2. Send the following files to <a
+        href="mailto:docker-homeworks@jpassion.com">docker-homeworks@jpassion.com</a><br>
+      <ul>
+        <li>Dockerfile</li>
+        <li>Screen capture that shows the code and result&nbsp;<span
+            style="font-weight: bold;"> </span>- name it as<span
+            style="font-weight: bold; color: rgb(0, 0, 0);">
+            docker_build_your_own.jpg<br>
+          </span></li>
+      </ul>
+      <span style="font-weight: bold;"></span></div>
+    <div style="margin-left: 40px;">
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
+
+
+
+
+
+
+
+
+
+
+
+
+      &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp; <a href="index.html#Tutorial_Exercises">return to top</a><br>
+    </div>
+    <br>
+    <div style="margin-left: 40px;"><br>
+    </div>
+    <p> </p>
+    <!-- ======================================================================================== -->
+  </body>
+</html>
